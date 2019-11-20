@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Алексей Илатовский](https://up.htmlacademy.ru/ecmascript/10/user/951805).
-* Наставник: [Сергей Андреев](https://htmlacademy.ru/profile/id812127).
+* Наставник: [Сергей Андреев](https://up.htmlacademy.ru/ecmascript/10/user/812127).
 
 ---
 
