@@ -10,7 +10,6 @@ import {createDayTemplate} from './components/day.js';
 import {createEventListTemplate} from './components/event-list.js';
 import {createEventTemplate} from './components/event.js';
 
-
 const CARD_COUNT = 3;
 
 const render = (container, template, place = `beforeend`) => (
