@@ -10,7 +10,7 @@ import {createDayTemplate} from './components/day.js';
 import {createEventListTemplate} from './components/event-list.js';
 import {createEventTemplate} from './components/event.js';
 import {generateCards} from './mock/card.js';
-import {menuElements} from './mock/menu.js';
+import {tabs} from './mock/menu.js';
 import {filterElements} from './mock/filter.js';
 
 const CARD_COUNT = 4;
@@ -38,7 +38,7 @@ tripCostElement.textContent = `${tripCost}`;
 
 // создаем разметку для меню и фильтра
 const tripControlElement = siteHeaderElement.querySelector(`.trip-controls`);
-render(tripControlElement, createMenuTemplate(menuElements));
+render(tripControlElement, createMenuTemplate(tabs));
 render(tripControlElement, createFilterFormTemplate(filterElements));
 
 // создаем разметку для сортировки

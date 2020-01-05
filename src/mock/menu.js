@@ -1,4 +1,4 @@
-export const menuElements = [
+export const tabs = [
   {
     title: `Table`,
     toggle: true,
