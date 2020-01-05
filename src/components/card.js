@@ -6,9 +6,7 @@ import {MILSEC_IN_MIN} from '../const.js';
 
 const createOffersMarkup = (additionOffers) => {
   return additionOffers
-    .filter((offer) => {
-      return offer.chosen;
-    })
+    .filter((offer) => offer.chosen)
     .map((offer) => {
       return (
         `<li class="event__offer">
