@@ -8,7 +8,6 @@ const createNoCardTemplate = () => {
   );
 };
 
-
 export default class NoTasks {
   constructor() {
     this._element = null;
