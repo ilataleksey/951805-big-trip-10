@@ -1,14 +1,17 @@
-import {createMenuTemplate} from './components/menu.js';
-import {createFilterFormTemplate} from './components/filter.js';
-import {createSortFormTemplate} from './components/sort.js';
-import {createCardTemplate} from './components/card.js';
-import {createNewCardFormTemplate} from './components/new-card.js';
-import {createEditCardFormTemplate} from './components/edit-card.js';
-import {createInfoTemplate} from './components/info.js';
-import {createDayListTemplate} from './components/day-list.js';
-import {createDayTemplate} from './components/day.js';
-import {createEventListTemplate} from './components/event-list.js';
-import {createEventTemplate} from './components/event.js';
+import InfoComponent from './components/info.js';
+import MenuComponent from './components/menu.js';
+import FilterComponent from './components/filter.js';
+import SortElement from './components/sort.js';
+import NewCardComponent from './components/new-card.js';
+import {NEW_CARDS} from './const.js';
+import DayListComponent from './components/day-list.js';
+import NoCardComponent from './components/no-card.js';
+import DayComponent from './components/day.js';
+import EventListComponent from './components/event-list.js';
+import EventComponent from './components/event.js';
+import EditCardComponent from './components/edit-card.js';
+import CardComponent from './components/card.js';
+import {render, RenderPosition} from './utils.js';
 import {generateCards} from './mock/card.js';
 import {tabs} from './mock/menu.js';
 import {filterElements} from './mock/filter.js';
@@ -18,77 +21,108 @@ const CARD_COUNT = 4;
 // генерирует карточки точек маршрута
 const cards = generateCards(CARD_COUNT);
 
-// функция для рендеринга элементов разметки
-const render = (container, template, place = `beforeend`) => (
-  container.insertAdjacentHTML(place, template)
-);
+// функция для генерации карточки точки маршрута внутри дня
+const renderCard = (eventListElement, card, i) => {
 
-// создает разметку с информацией о поездке
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      evt.preventDefault();
+      replaceEditToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  const eventComponent = new EventComponent();
+  const replaceCardToEdit = () => {
+
+    eventListElement.replaceChild(eventComponent.getElement(), cardComponent.getElement());
+
+    render(eventComponent.getElement(), editCardComponent.getElement(), RenderPosition.BEFOREEND);
+
+    const editForm = eventComponent.getElement().querySelector(`form`);
+    editForm.addEventListener(`submit`, replaceEditToCard);
+  };
+
+  const replaceEditToCard = () => {
+    eventListElement.replaceChild(cardComponent.getElement(), eventComponent.getElement());
+  };
+
+  const cardComponent = new CardComponent(card);
+  const editButton = cardComponent.getElement().querySelector(`.event__rollup-btn`);
+
+  editButton.addEventListener(`click`, () => {
+    replaceCardToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  const editCardComponent = new EditCardComponent(card, i);
+
+  render(eventListElement, cardComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
+const renderDay = (card, i, array, dayCount) => {
+  const date = card.dates.start;
+
+  if (i === 0 || card.dates.start.getDate() !== array[i - 1].dates.start.getDate()) {
+
+    dayCount++;
+    const dayComponent = new DayComponent(dayCount, date);
+
+    render(dayListComponent.getElement(), dayComponent.getElement(), RenderPosition.BEFOREEND);
+
+    render(dayComponent.getElement(), new EventListComponent().getElement(), RenderPosition.BEFOREEND);
+
+    const eventListElement = dayComponent.getElement().querySelector(`.trip-events__list`);
+
+    renderCard(eventListElement, card, array, i);
+  } else {
+    const eventListElements = document.querySelectorAll(`.trip-events__list`);
+    const lastEventListElementIndex = eventListElements.length - 1;
+    const lastEventListElement = eventListElements[lastEventListElementIndex];
+
+    renderCard(lastEventListElement, card, array, i);
+  }
+
+  return dayCount;
+};
+
 const siteHeaderElement = document.querySelector(`.page-header`);
-const tripInfoElement = siteHeaderElement.querySelector(`.trip-info`);
-render(tripInfoElement, createInfoTemplate(cards), `afterbegin`);
-
-// рассчитываем и изменяем стоимость поездки
-const tripCostElement = document.querySelector(`.trip-info__cost-value`);
-let tripCost = 0;
-cards.forEach((card) => {
-  tripCost += card.price;
-});
-tripCostElement.textContent = `${tripCost}`;
 
 // создаем разметку для меню и фильтра
 const tripControlElement = siteHeaderElement.querySelector(`.trip-controls`);
-render(tripControlElement, createMenuTemplate(tabs));
-render(tripControlElement, createFilterFormTemplate(filterElements));
+render(tripControlElement, new MenuComponent(tabs).getElement(), RenderPosition.BEFOREEND);
+render(tripControlElement, new FilterComponent(filterElements).getElement(), RenderPosition.BEFOREEND);
 
 // создаем разметку для сортировки
 const siteMainElement = document.querySelector(`.page-main`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
-render(tripEventsElement, createSortFormTemplate(), `afterbegin`);
 
 // создаем разметку для заведения новой карточки точки маршрута
-render(tripEventsElement, createNewCardFormTemplate());
+NEW_CARDS.forEach((card, i) => render(tripEventsElement, new NewCardComponent(card, i).getElement(), RenderPosition.BEFOREEND));
 
-// создаем разметку для добавления списка сущесвующих карточек
-render(tripEventsElement, createDayListTemplate());
+// создаем разметку списка сущесвующих точек маршрута
+const dayListComponent = new DayListComponent();
+render(tripEventsElement, dayListComponent.getElement(), RenderPosition.BEFOREEND);
 
-const dayListElement = tripEventsElement.querySelector(`.trip-days`);
+// проверяем существуют ли точки маршрута
+const isNoCards = cards.length === 0;
+if (isNoCards) {
 
-// функция для добавления нового дня
-const addDayList = (card) => {
-  dayCount++;
-  render(dayListElement, createDayTemplate(dayCount, card.dates.start));
-};
+  // при отсутствии точек маршрута выводится заглушка
+  render(dayListComponent.getElement(), new NoCardComponent().getElement(), RenderPosition.BEFOREEND);
 
-// функция для генерации карточки точки маршрута внутри дня
-const addEvent = (card, i) => {
-  const dayElements = dayListElement.querySelectorAll(`.trip-days__item`);
-  const dayElement = dayElements[dayElements.length - 1];
-  render(dayElement, createEventListTemplate());
+} else {
 
-  const eventListElement = dayElement.querySelector(`.trip-events__list`);
-  render(eventListElement, createEventTemplate());
+  // создает разметку с информацией о поездке
+  const tripInfoElement = siteHeaderElement.querySelector(`.trip-info`);
+  render(tripInfoElement, new InfoComponent(cards).getElement(), RenderPosition.AFTERBEGINING);
+  render(tripEventsElement, new SortElement().getElement(), RenderPosition.AFTERBEGINING);
 
-  const eventElement = eventListElement.querySelector(`.trip-events__item`);
-  if (i === 0) {
-    render(eventElement, createEditCardFormTemplate(card));
-  } else {
-    render(eventElement, createCardTemplate(card));
-  }
-};
-
-// добавляет в разметку дни и точки маршрута в соответствии с карточками
-let dayCount = 0;
-cards.forEach((card, i, array) => {
-  if (i === 0) {
-    addDayList(card);
-    addEvent(card, i);
-  } else {
-    if (card.dates.start.getDate() !== array[i - 1].dates.start.getDate()) {
-      addDayList(card);
-      addEvent(card, i);
-    } else {
-      addEvent(card, i);
-    }
-  }
-});
+  // добавляет в разметку дни и точки маршрута в соответствии с карточками
+  let dayCount = 0;
+  cards.forEach((card, i, array) => {
+    dayCount = renderDay(card, i, array, dayCount);
+  });
+}

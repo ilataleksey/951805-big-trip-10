@@ -1,3 +1,8 @@
+export const RenderPosition = {
+  AFTERBEGINING: `afterbegining`,
+  BEFOREEND: `beforeend`,
+};
+
 const getFormat = (date) => {
   return {
     day: date.getDate() < 10 ? `0${date.getDate()}` : date.getDate(),
@@ -25,4 +30,24 @@ export const formatTimeHTML = (date) => {
 
 export const formatTimeHTMLShort = (date) => {
   return `${getFormat(date).fullYear}-${getFormat(date).month}-${getFormat(date).day}`;
+};
+
+// функция создания контейнера для элемента
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+// функция для рендеринга элементов разметки
+export const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGINING:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
 };

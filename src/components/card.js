@@ -1,8 +1,5 @@
-import {formatTimeShort} from '../utils.js';
-import {formatTimeHTML} from '../utils.js';
-import {MILSEC_IN_DAY} from '../const.js';
-import {MILSEC_IN_HOUR} from '../const.js';
-import {MILSEC_IN_MIN} from '../const.js';
+import {formatTimeShort, formatTimeHTML, createElement} from '../utils.js';
+import {MILSEC_IN_DAY, MILSEC_IN_HOUR, MILSEC_IN_MIN} from '../const.js';
 
 const createOffersMarkup = (additionOffers) => {
   return additionOffers
@@ -33,17 +30,17 @@ export const createCardTemplate = (card) => {
 
   let durationD = ``;
   if (durationDays) {
-    durationD = durationDays > 10 ? `${durationDays}D` : `0${durationDays}D`;
+    durationD = durationDays >= 10 ? `${durationDays}D` : `0${durationDays}D`;
   }
 
   let durationH = ``;
   if (durationHours) {
-    durationH = durationHours > 10 ? `${durationHours}H` : `0${durationHours}H`;
+    durationH = durationHours >= 10 ? `${durationHours}H` : `0${durationHours}H`;
   }
 
   let durationM = ``;
   if (durationMinutes) {
-    durationM = durationMinutes > 10 ? `${durationMinutes}M` : `0${durationMinutes}M`;
+    durationM = durationMinutes >= 10 ? `${durationMinutes}M` : `0${durationMinutes}M`;
   }
 
   const addOffers = createOffersMarkup(Array.from(offers));
@@ -80,3 +77,26 @@ export const createCardTemplate = (card) => {
     </li>`
   );
 };
+
+export default class Card {
+  constructor(card) {
+    this._card = card;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createCardTemplate(this._card);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this.element = null;
+  }
+}

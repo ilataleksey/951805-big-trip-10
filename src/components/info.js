@@ -1,6 +1,7 @@
 import {MONTHS} from '../const.js';
+import {createElement} from '../utils.js';
 
-export const createInfoTemplate = (cards) => {
+const createInfoTemplate = (cards) => {
 
   const firstCity = cards[0].city;
   const lastCity = cards[cards.length - 1].city;
@@ -13,6 +14,12 @@ export const createInfoTemplate = (cards) => {
     end = `${MONTHS[cards[cards.length - 1].dates.start.getMonth()].toUpperCase()} ${cards[cards.length - 1].dates.start.getDate()}`;
   }
 
+  // рассчитываем и изменяем стоимость поездки
+  const tripCostElement = document.querySelector(`.trip-info__cost-value`);
+
+  const tripCost = cards.reduce((prev, acc) => prev + acc.price, 0);
+  tripCostElement.textContent = `${tripCost}`;
+
   return (
     `<div class="trip-info__main">
       <h1 class="trip-info__title">${firstCity} &mdash; ... &mdash; ${lastCity}</h1>
@@ -21,3 +28,27 @@ export const createInfoTemplate = (cards) => {
     </div>`
   );
 };
+
+export default class Info {
+  constructor(cards) {
+    this._cards = cards;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createInfoTemplate(this._cards);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+}

@@ -1,18 +1,20 @@
 import {createElement} from '../utils.js';
 
-const createEventTemplate = () => {
+const createNoCardTemplate = () => {
   return (
-    `<li class="trip-events__item"></li>`
+    `<p class="trip-events__msg">
+      Click New Event to create your first point
+    </p>`
   );
 };
 
-export default class Event {
+export default class NoTasks {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createEventTemplate();
+    return createNoCardTemplate();
   }
 
   getElement() {
