@@ -21,6 +21,73 @@ const CARD_COUNT = 4;
 // генерирует карточки точек маршрута
 const cards = generateCards(CARD_COUNT);
 
+// функция для генерации карточки точки маршрута внутри дня
+const renderCard = (eventListElement, card, i) => {
+
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      evt.preventDefault();
+      replaceEditToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  const eventComponent = new EventComponent();
+  const replaceCardToEdit = () => {
+
+    eventListElement.replaceChild(eventComponent.getElement(), cardComponent.getElement());
+
+    render(eventComponent.getElement(), editCardComponent.getElement(), RenderPosition.BEFOREEND);
+
+    const editForm = eventComponent.getElement().querySelector(`form`);
+    editForm.addEventListener(`submit`, replaceEditToCard);
+  };
+
+  const replaceEditToCard = () => {
+    eventListElement.replaceChild(cardComponent.getElement(), eventComponent.getElement());
+  };
+
+  const cardComponent = new CardComponent(card);
+  const editButton = cardComponent.getElement().querySelector(`.event__rollup-btn`);
+
+  editButton.addEventListener(`click`, () => {
+    replaceCardToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  const editCardComponent = new EditCardComponent(card, i);
+
+  render(eventListElement, cardComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
+const renderDay = (card, i, array, dayCount) => {
+  const date = card.dates.start;
+
+  if (i === 0 || card.dates.start.getDate() !== array[i - 1].dates.start.getDate()) {
+
+    dayCount++;
+    const dayComponent = new DayComponent(dayCount, date);
+
+    render(dayListComponent.getElement(), dayComponent.getElement(), RenderPosition.BEFOREEND);
+
+    render(dayComponent.getElement(), new EventListComponent().getElement(), RenderPosition.BEFOREEND);
+
+    const eventListElement = dayComponent.getElement().querySelector(`.trip-events__list`);
+
+    renderCard(eventListElement, card, array, i);
+  } else {
+    const eventListElements = document.querySelectorAll(`.trip-events__list`);
+    const lastEventListElementIndex = eventListElements.length - 1;
+    const lastEventListElement = eventListElements[lastEventListElementIndex];
+
+    renderCard(lastEventListElement, card, array, i);
+  }
+
+  return dayCount;
+};
+
 const siteHeaderElement = document.querySelector(`.page-header`);
 
 // создаем разметку для меню и фильтра
@@ -53,41 +120,9 @@ if (isNoPoints) {
   render(tripInfoElement, new InfoComponent(cards).getElement(), RenderPosition.AFTERBEGINING);
   render(tripEventsElement, new SortElement().getElement(), RenderPosition.AFTERBEGINING);
 
-  // функция для добавления нового дня
-  const addDayList = (date) => {
-    dayCount++;
-    const dayComponent = new DayComponent(dayCount, date);
-    render(dayListComponent.getElement(), dayComponent.getElement(), RenderPosition.BEFOREEND);
-
-    render(dayComponent.getElement(), new EventListComponent().getElement(), RenderPosition.BEFOREEND);
-
-    const eventListComponent = new EventListComponent();
-    render(eventListComponent.getElement(), new EventComponent().getElement(), RenderPosition.BEFOREEND);
-  };
-
-  // функция для генерации карточки точки маршрута внутри дня
-  const addEvent = (card, i) => {
-    if (i === 0) {
-
-      render(new EventComponent().getElement(), new EditCardComponent(card, i).getElement(), RenderPosition.BEFOREEND);
-    } else {
-      render(new EventListComponent().getElement(), new CardComponent(card).getElement(), RenderPosition.BEFOREEND);
-    }
-  };
-
   // добавляет в разметку дни и точки маршрута в соответствии с карточками
   let dayCount = 0;
   cards.forEach((card, i, array) => {
-    if (i === 0) {
-      addDayList(card.dates.start);
-      addEvent(card, i);
-    } else {
-      if (card.dates.start.getDate() !== array[i - 1].dates.start.getDate()) {
-        addDayList(card.dates.start);
-        addEvent(card, i);
-      } else {
-        addEvent(card, i);
-      }
-    }
+    dayCount = renderDay(card, i, array, dayCount);
   });
 }
