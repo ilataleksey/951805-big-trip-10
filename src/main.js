@@ -62,6 +62,7 @@ const renderCard = (eventListElement, card, i) => {
   render(eventListElement, cardComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
+// функция для создания разметки дня
 const renderDay = (card, i, array, dayCount) => {
   const date = card.dates.start;
 
