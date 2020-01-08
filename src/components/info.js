@@ -16,10 +16,8 @@ const createInfoTemplate = (cards) => {
 
   // рассчитываем и изменяем стоимость поездки
   const tripCostElement = document.querySelector(`.trip-info__cost-value`);
-  let tripCost = 0;
-  cards.forEach((card) => {
-    tripCost += card.price;
-  });
+
+  const tripCost = cards.reduce((prev, acc) => prev + acc.price, 0);
   tripCostElement.textContent = `${tripCost}`;
 
   return (
