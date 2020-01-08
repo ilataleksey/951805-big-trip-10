@@ -75,21 +75,25 @@ export const DESTINATIONS = [
 
 export const OFFERS = [
   {
+    id: `luggage`,
     type: `Add luggage`,
     price: `10`,
     chosen: false,
   },
   {
+    id: `class`,
     type: `Switch to comfort class`,
     price: `150`,
     chosen: false,
   },
   {
+    id: `meal`,
     type: `Add meal`,
     price: `2`,
     chosen: false,
   },
   {
+    id: `seats`,
     type: `Choose seats`,
     price: `9`,
     chosen: false,
@@ -114,3 +118,60 @@ export const MONTHS = [
 export const MILSEC_IN_DAY = 86400000;
 export const MILSEC_IN_HOUR = 3600000;
 export const MILSEC_IN_MIN = 60000;
+
+export const NEW_CARDS = [
+  {
+    id: `new-card`,
+    type: {
+      action: `flight`,
+      description: `Flight to `,
+    },
+    city: `Geneva`,
+    dates: {
+      start: new Date(),
+      end: new Date(),
+      duration: 0,
+    },
+    price: ``,
+    offers: [
+      {
+        id: `luggage`,
+        type: `Add luggage`,
+        price: `10`,
+        chosen: true,
+      },
+      {
+        id: `class`,
+        type: `Switch to comfort class`,
+        price: `150`,
+        chosen: true,
+      },
+      {
+        id: `meal`,
+        type: `Add meal`,
+        price: `2`,
+        chosen: false,
+      },
+      {
+        id: `seats`,
+        type: `Choose seats`,
+        price: `9`,
+        chosen: false,
+      },
+      {
+        id: `train`,
+        type: `Travel by train`,
+        price: `40`,
+        chosen: false,
+      },
+    ],
+    dest: `Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.`,
+    photos: [
+      `img/photos/1.jpg`,
+      `img/photos/2.jpg`,
+      `img/photos/3.jpg`,
+      `img/photos/4.jpg`,
+      `img/photos/5.jpg`,
+    ],
+  }
+];
