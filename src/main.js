@@ -107,8 +107,8 @@ const dayListComponent = new DayListComponent();
 render(tripEventsElement, dayListComponent.getElement(), RenderPosition.BEFOREEND);
 
 // проверяем существуют ли точки маршрута
-const isNoPoints = cards.length === 0;
-if (isNoPoints) {
+const isNoCards = cards.length === 0;
+if (isNoCards) {
 
   // при отсутствии точек маршрута выводится заглушка
   render(dayListComponent.getElement(), new NoCardComponent().getElement(), RenderPosition.BEFOREEND);
