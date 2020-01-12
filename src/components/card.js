@@ -1,6 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {formatTimeShort, formatTimeHTML} from '../utils/common.js';
-import {MILSEC_IN_DAY, MILSEC_IN_HOUR, MILSEC_IN_MIN} from '../const.js';
+import {formatTimeShort, formatTimeHTML, getDuration} from '../utils/common.js';
 
 const createOffersMarkup = (additionOffers) => {
   return additionOffers
@@ -25,24 +24,9 @@ export const createCardTemplate = (card) => {
   const startTimeHTML = formatTimeHTML(dates.start);
   const endTimeHTML = formatTimeHTML(dates.end);
 
-  const durationDays = Math.floor(dates.duration / MILSEC_IN_DAY);
-  const durationHours = Math.floor((dates.duration % MILSEC_IN_DAY) / MILSEC_IN_HOUR);
-  const durationMinutes = Math.floor(((dates.duration % MILSEC_IN_DAY) % MILSEC_IN_HOUR) / MILSEC_IN_MIN);
-
-  let durationD = ``;
-  if (durationDays) {
-    durationD = durationDays >= 10 ? `${durationDays}D` : `0${durationDays}D`;
-  }
-
-  let durationH = ``;
-  if (durationHours) {
-    durationH = durationHours >= 10 ? `${durationHours}H` : `0${durationHours}H`;
-  }
-
-  let durationM = ``;
-  if (durationMinutes) {
-    durationM = durationMinutes >= 10 ? `${durationMinutes}M` : `0${durationMinutes}M`;
-  }
+  const durationD = getDuration().days;
+  const durationH = getDuration().hours;
+  const durationM = getDuration().minutes;
 
   const addOffers = createOffersMarkup(Array.from(offers));
   return (
