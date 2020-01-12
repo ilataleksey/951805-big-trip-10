@@ -192,4 +192,9 @@ export default class EditCard extends AbstractComponent {
   getTemplate() {
     return createEditCardFormTemplate(this._card, this._index);
   }
+
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`form`)
+      .addEventListener(`submit`, handler);
+  }
 }
