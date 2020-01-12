@@ -24,9 +24,9 @@ export const createCardTemplate = (card) => {
   const startTimeHTML = formatTimeHTML(dates.start);
   const endTimeHTML = formatTimeHTML(dates.end);
 
-  const durationD = getDuration().days;
-  const durationH = getDuration().hours;
-  const durationM = getDuration().minutes;
+  const durationD = getDuration(dates).days;
+  const durationH = getDuration(dates).hours;
+  const durationM = getDuration(dates).minutes;
 
   const addOffers = createOffersMarkup(Array.from(offers));
   return (
