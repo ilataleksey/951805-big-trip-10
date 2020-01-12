@@ -1,5 +1,5 @@
 import {MONTHS} from '../const.js';
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createInfoTemplate = (cards) => {
 
@@ -29,26 +29,14 @@ const createInfoTemplate = (cards) => {
   );
 };
 
-export default class Info {
+export default class Info extends AbstractComponent {
   constructor(cards) {
+    super();
+
     this._cards = cards;
-    this._element = null;
   }
 
   getTemplate() {
     return createInfoTemplate(this._cards);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
 }
