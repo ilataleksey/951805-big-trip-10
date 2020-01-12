@@ -12,13 +12,18 @@ export const createElement = (template) => {
 };
 
 // функция для рендеринга элементов разметки
-export const render = (container, element, place) => {
+export const render = (container, component, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGINING:
-      container.prepend(element);
+      container.prepend(component);
       break;
     case RenderPosition.BEFOREEND:
-      container.append(element);
+      container.append(component);
       break;
   }
+};
+
+export const remove = (component) => {
+  component.getElement().remove();
+  component.removeElement();
 };
