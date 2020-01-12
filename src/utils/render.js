@@ -15,10 +15,10 @@ export const createElement = (template) => {
 export const render = (container, component, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGINING:
-      container.prepend(component);
+      container.prepend(component.getElement());
       break;
     case RenderPosition.BEFOREEND:
-      container.append(component);
+      container.append(component.getElement());
       break;
   }
 };
