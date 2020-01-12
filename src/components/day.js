@@ -21,8 +21,8 @@ export default class Day extends AbstractComponent {
   constructor(dayCount, date) {
     super();
 
-    this._date = date;
     this._dayCount = dayCount;
+    this._date = date;
   }
 
   getTemplate() {
