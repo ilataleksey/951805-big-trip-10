@@ -1,4 +1,5 @@
-import {createElement, formatTime} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
+import {formatTime} from '../utils/common.js';
 import {createOffersMarkup} from './edit-card.js';
 import {createPhotoMarkup} from './edit-card.js';
 
@@ -145,26 +146,15 @@ const createNewCardFormTemplate = (card, i) => {
   );
 };
 
-export default class NewCard {
+export default class NewCard extends AbstractComponent {
   constructor(card, i) {
+    super();
+
     this._card = card;
     this._index = i + 1;
-    this._element = null;
   }
 
   getTemplate() {
     return createNewCardFormTemplate(this._card, this._index);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

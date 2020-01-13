@@ -1,7 +1,4 @@
-export const RenderPosition = {
-  AFTERBEGINING: `afterbegining`,
-  BEFOREEND: `beforeend`,
-};
+import {MILSEC_IN_DAY, MILSEC_IN_HOUR, MILSEC_IN_MIN} from '../const.js';
 
 const getFormat = (date) => {
   return {
@@ -32,22 +29,29 @@ export const formatTimeHTMLShort = (date) => {
   return `${getFormat(date).fullYear}-${getFormat(date).month}-${getFormat(date).day}`;
 };
 
-// функция создания контейнера для элемента
-export const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
+export const getDuration = (date) => {
+  const durationDays = Math.floor(date.duration / MILSEC_IN_DAY);
+  const durationHours = Math.floor((date.duration % MILSEC_IN_DAY) / MILSEC_IN_HOUR);
+  const durationMinutes = Math.floor(((date.duration % MILSEC_IN_DAY) % MILSEC_IN_HOUR) / MILSEC_IN_MIN);
 
-  return newElement.firstChild;
-};
-
-// функция для рендеринга элементов разметки
-export const render = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGINING:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
+  let durationD = ``;
+  if (durationDays) {
+    durationD = durationDays >= 10 ? `${durationDays}D` : `0${durationDays}D`;
   }
+
+  let durationH = ``;
+  if (durationHours) {
+    durationH = durationHours >= 10 ? `${durationHours}H` : `0${durationHours}H`;
+  }
+
+  let durationM = ``;
+  if (durationMinutes) {
+    durationM = durationMinutes >= 10 ? `${durationMinutes}M` : `0${durationMinutes}M`;
+  }
+
+  return {
+    days: durationD,
+    hours: durationH,
+    minutes: durationM
+  };
 };

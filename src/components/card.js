@@ -1,5 +1,5 @@
-import {formatTimeShort, formatTimeHTML, createElement} from '../utils.js';
-import {MILSEC_IN_DAY, MILSEC_IN_HOUR, MILSEC_IN_MIN} from '../const.js';
+import AbstractComponent from './abstract-component.js';
+import {formatTimeShort, formatTimeHTML, getDuration} from '../utils/common.js';
 
 const createOffersMarkup = (additionOffers) => {
   return additionOffers
@@ -24,24 +24,9 @@ export const createCardTemplate = (card) => {
   const startTimeHTML = formatTimeHTML(dates.start);
   const endTimeHTML = formatTimeHTML(dates.end);
 
-  const durationDays = Math.floor(dates.duration / MILSEC_IN_DAY);
-  const durationHours = Math.floor((dates.duration % MILSEC_IN_DAY) / MILSEC_IN_HOUR);
-  const durationMinutes = Math.floor(((dates.duration % MILSEC_IN_DAY) % MILSEC_IN_HOUR) / MILSEC_IN_MIN);
-
-  let durationD = ``;
-  if (durationDays) {
-    durationD = durationDays >= 10 ? `${durationDays}D` : `0${durationDays}D`;
-  }
-
-  let durationH = ``;
-  if (durationHours) {
-    durationH = durationHours >= 10 ? `${durationHours}H` : `0${durationHours}H`;
-  }
-
-  let durationM = ``;
-  if (durationMinutes) {
-    durationM = durationMinutes >= 10 ? `${durationMinutes}M` : `0${durationMinutes}M`;
-  }
+  const durationD = getDuration(dates).days;
+  const durationH = getDuration(dates).hours;
+  const durationM = getDuration(dates).minutes;
 
   const addOffers = createOffersMarkup(Array.from(offers));
   return (
@@ -78,25 +63,19 @@ export const createCardTemplate = (card) => {
   );
 };
 
-export default class Card {
+export default class Card extends AbstractComponent {
   constructor(card) {
+    super();
+
     this._card = card;
-    this._element = null;
   }
 
   getTemplate() {
     return createCardTemplate(this._card);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this.element = null;
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
   }
 }

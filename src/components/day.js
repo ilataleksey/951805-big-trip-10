@@ -1,5 +1,6 @@
+import AbstractComponent from './abstract-component.js';
 import {MONTHS} from '../const.js';
-import {createElement, formatTimeHTMLShort} from '../utils.js';
+import {formatTimeHTMLShort} from '../utils/common.js';
 
 const createDayTemplate = (dayCount, date) => {
 
@@ -16,26 +17,15 @@ const createDayTemplate = (dayCount, date) => {
   );
 };
 
-export default class Day {
+export default class Day extends AbstractComponent {
   constructor(dayCount, date) {
-    this._date = date;
+    super();
+
     this._dayCount = dayCount;
-    this._element = null;
+    this._date = date;
   }
 
   getTemplate() {
     return createDayTemplate(this._dayCount, this._date);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
