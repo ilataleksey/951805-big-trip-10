@@ -2,30 +2,38 @@ import AbstractComponent from './abstract-component.js';
 import {MONTHS} from '../const.js';
 import {formatTimeHTMLShort} from '../utils/common.js';
 
-const createDayTemplate = (dayCount, date) => {
+const createDayTemplate = (dayNumber, date) => {
 
-  const day = `${MONTHS[date.getMonth()].toUpperCase()} ${date.getDate()}`;
-  const dayHTML = formatTimeHTMLShort(date);
+  let dayTemplate = ``;
+
+  if (dayNumber !== 0) {
+    const day = `${MONTHS[date.getMonth()].toUpperCase()} ${date.getDate()}`;
+    const dayHTML = formatTimeHTMLShort(date);
+
+    dayTemplate = (
+      `<span class="day__counter">${dayNumber}</span>
+      <time class="day__date" datetime="${dayHTML}">${day}</time>`
+    );
+  }
 
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
-        <span class="day__counter">${dayCount}</span>
-        <time class="day__date" datetime="${dayHTML}">${day}</time>
+        ${dayTemplate}
       </div>
     </li>`
   );
 };
 
 export default class Day extends AbstractComponent {
-  constructor(dayCount, date) {
+  constructor(dayNumber, date) {
     super();
 
-    this._dayCount = dayCount;
+    this.dayNumber = dayNumber;
     this._date = date;
   }
 
   getTemplate() {
-    return createDayTemplate(this._dayCount, this._date);
+    return createDayTemplate(this.dayNumber, this._date);
   }
 }
