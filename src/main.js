@@ -1,6 +1,8 @@
 import MenuComponent from './components/menu.js';
 import FilterComponent from './components/filter.js';
-import TripEventsController from './controller/trip-events.js';
+import DayListController from './controller/trip-events.js';
+import DayListComponent from './components/day-list.js';
+import InfoComponent from './components/info.js';
 import {render, RenderPosition} from './utils/render.js';
 import {generateCards} from './mock/card.js';
 import {tabs} from './mock/menu.js';
@@ -21,12 +23,21 @@ render(tripControlElement, new FilterComponent(filterElements), RenderPosition.B
 // создаем разметку списка сущесвующих точек маршрута
 const siteMainElement = document.querySelector(`.page-main`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
-const tripEventsController = new TripEventsController(tripEventsElement);
+
+const dayListComponent = new DayListComponent();
+render(tripEventsElement, dayListComponent, RenderPosition.BEFOREEND);
+
+const dayListController = new DayListController(dayListComponent);
 
 // генерируем карточки точек маршрута
 const cards = generateCards(CARD_COUNT);
 
-tripEventsController.render(cards);
+// создает разметку с информацией о поездке
+const tripInfoElement = document.querySelector(`.trip-info`);
+const infoComponent = new InfoComponent(cards);
+render(tripInfoElement, infoComponent, RenderPosition.AFTERBEGINING);
+
+dayListController.render(cards);
 
 
 // создаем разметку для заведения новой карточки точки маршрута

@@ -4,6 +4,7 @@ import {formatTimeShort, formatTimeHTML, getDuration} from '../utils/common.js';
 const createOffersMarkup = (additionOffers) => {
   return additionOffers
     .filter((offer) => offer.chosen)
+    .slice(0, 3)
     .map((offer) => {
       return (
         `<li class="event__offer">
@@ -75,6 +76,11 @@ export default class Card extends AbstractComponent {
   }
 
   setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+  }
+
+  setEditCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
   }

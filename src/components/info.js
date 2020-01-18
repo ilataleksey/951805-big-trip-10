@@ -3,8 +3,26 @@ import AbstractComponent from './abstract-component.js';
 
 const createInfoTemplate = (cards) => {
 
-  const firstCity = cards[0].city;
-  const lastCity = cards[cards.length - 1].city;
+  const citiesList = new Set();
+  cards.forEach((card) => {
+    citiesList.add(card.city);
+  });
+
+  const cities = Array.from(citiesList);
+  const firstCity = cities[0];
+  const secondCity = cities[1];
+  const lastCity = cities[citiesList.size - 1];
+  let rout = ``;
+
+  if (citiesList.size === 1) {
+    rout = `${firstCity}`;
+  } else if (citiesList.size === 2) {
+    rout = `${firstCity} &mdash; ${lastCity}`;
+  } else if (citiesList.size === 3) {
+    rout = `${firstCity} &mdash; ${secondCity} &mdash; ${lastCity}`;
+  } else {
+    rout = `${firstCity} &mdash; ... &mdash; ${lastCity}`;
+  }
 
   const start = `${MONTHS[cards[0].dates.start.getMonth()].toUpperCase()} ${cards[0].dates.start.getDate()}`;
   let end = start;
@@ -22,7 +40,7 @@ const createInfoTemplate = (cards) => {
 
   return (
     `<div class="trip-info__main">
-      <h1 class="trip-info__title">${firstCity} &mdash; ... &mdash; ${lastCity}</h1>
+      <h1 class="trip-info__title">${rout}</h1>
 
       <p class="trip-info__dates">${start}&nbsp;&mdash;&nbsp;${end}</p>
     </div>`

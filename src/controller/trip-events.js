@@ -1,13 +1,12 @@
 import DayComponent from '../components/day.js';
-import DayListComponent from '../components/day-list.js';
 import EventListComponent from '../components/event-list.js';
 import EventComponent from '../components/event.js';
 import EditCardComponent from '../components/edit-card.js';
 import CardComponent from '../components/card.js';
 import {render, replace, RenderPosition} from '../utils/render.js';
 import NoCardComponent from '../components/no-card.js';
-import InfoComponent from '../components/info.js';
-import SortComponent from '../components/sort.js';
+import SortComponent, {SortType} from '../components/sort.js';
+import {formatTimeHTMLShort} from '../utils/common.js';
 
 // функция для генерации карточки точки маршрута внутри дня
 const renderCard = (eventListElement, card, i) => {
@@ -43,59 +42,96 @@ const renderCard = (eventListElement, card, i) => {
   render(eventListElement, cardComponent, RenderPosition.BEFOREEND);
 };
 
-export default class TripEventsController {
+export default class DayListController {
   constructor(container) {
     this._container = container;
 
     this._noCardComponent = new NoCardComponent();
-    this._infoComponent = new InfoComponent();
     this._sortComponent = new SortComponent();
-    this._dayListComponent = new DayListComponent();
     this._dayComponent = new DayComponent();
     this._eventListComponent = new EventListComponent();
     this._eventComponent = new EventComponent();
   }
 
   render(cards) {
-    // проверяем наличие карточек
-    const container = this._container;
-    render(container, this._dayListComponent, RenderPosition.BEFOREEND);
+    const container = this._container.getElement();
 
-    const dayListElement = this._dayListComponent.getElement();
+    // проверяем наличие карточек
     const isNoCards = cards.length === 0;
     if (isNoCards) {
       // при отсутствии карточек маршрута выводится заглушка
-      render(dayListElement, this._noCardComponent, RenderPosition.BEFOREEND);
+      render(container, this._noCardComponent, RenderPosition.BEFOREEND);
       return;
     } else {
-      // создает разметку с информацией о поездке
-      const tripInfoElement = document.querySelector(`.trip-info`);
-      const infoComponent = new InfoComponent(cards);
-      render(tripInfoElement, infoComponent, RenderPosition.AFTERBEGINING);
-      render(container, this._sortComponent, RenderPosition.AFTERBEGINING);
 
       // добавляет в разметку дни и точки маршрута в соответствии с карточками
-      let dayCount = 0;
-      cards.forEach((card, i, array) => {
-        const date = card.dates.start;
+      const renderCards = (cardsArray, isDayCount) => {
+        let dayNumber = 0;
+        let date = ``;
 
-        // проверяем дату текущей карточки на совпадение предыдущей
-        if (i === 0 || date.getDate() !== array[i - 1].dates.start.getDate()) {
-          // создаем новый день
-          dayCount = dayCount + 1;
-          const dayComponent = new DayComponent(dayCount, date);
-          render(dayListElement, dayComponent, RenderPosition.BEFOREEND);
+        // по-умолчанию рендерится день
+        let dayComponent = new DayComponent(dayNumber, date);
+        render(container, dayComponent, RenderPosition.BEFOREEND);
 
-          // создаем новый список событий
-          const dayElement = dayComponent.getElement();
-          this._eventListComponent = new EventListComponent();
-          render(dayElement, this._eventListComponent, RenderPosition.BEFOREEND);
+        // в блок дня рендерится список событий
+        let dayElement = dayComponent.getElement();
+        this._eventListComponent = new EventListComponent();
+        render(dayElement, this._eventListComponent, RenderPosition.BEFOREEND);
+
+        if (isDayCount) {
+          // зачищаем разметку
+          container.innerHTML = ``;
         }
 
-        // рендерим карточку точки маршрута
-        const eventListElement = this._eventListComponent.getElement();
-        renderCard(eventListElement, card, i);
-      });
+        cardsArray.forEach((card, i, array) => {
+          // проверяем включен ли тублер
+          if (isDayCount) {
+            // проверяем дату текущей карточки на совпадение предыдущей
+            date = card.dates.start;
+            if (i === 0 || formatTimeHTMLShort(date) !== formatTimeHTMLShort(array[i - 1].dates.start)) {
+              // создаем новый день
+              dayNumber++;
+              dayComponent = new DayComponent(dayNumber, date);
+              render(container, dayComponent, RenderPosition.BEFOREEND);
+
+              // создаем новый список событий
+              dayElement = dayComponent.getElement();
+              this._eventListComponent = new EventListComponent();
+              render(dayElement, this._eventListComponent, RenderPosition.BEFOREEND);
+            }
+          }
+
+          // рендерим карточку точки маршрута в список событий
+          const eventListElement = this._eventListComponent.getElement();
+          renderCard(eventListElement, card, i);
+        });
+
+        render(container, this._sortComponent, RenderPosition.AFTERBEGINING);
+        this._sortComponent.setSortTypeChangeHandler((sortType) => {
+          let sortedCards = [];
+
+          switch (sortType) {
+            case SortType.EVENT:
+              sortedCards = cards;
+              isDayCount = true;
+              break;
+            case SortType.PRICE:
+              sortedCards = cards.slice().sort((a, b) => b.price - a.price);
+              isDayCount = false;
+              break;
+            case SortType.DURATION:
+              sortedCards = cards.slice().sort((a, b) => b.dates.duration - a.dates.duration);
+              isDayCount = false;
+              break;
+          }
+
+          container.innerHTML = ``;
+
+          renderCards(sortedCards, isDayCount);
+        });
+      };
+
+      renderCards(cards, true);
     }
   }
 }

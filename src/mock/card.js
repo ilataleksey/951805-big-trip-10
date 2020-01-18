@@ -15,8 +15,6 @@ const PHOTO_COUNT = {
   max: 5,
 };
 
-const MAX_OFFERS_COUNT = 3;
-
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
 
@@ -48,15 +46,12 @@ const getRandomDates = () => {
 };
 
 const generateOffers = (offers) => {
-  let i = 0;
   return offers
     .map((offer) => {
       const newOffer = Object.assign({}, offer);
       const flag = Math.random() > 0.5;
-      if (i < MAX_OFFERS_COUNT && flag) {
-        newOffer.chosen = flag;
-        i++;
-      }
+      newOffer.chosen = flag;
+
       return newOffer;
     });
 };
