@@ -1,6 +1,6 @@
 import MenuComponent from './components/menu.js';
 import FilterComponent from './components/filter.js';
-import DayListController from './controller/trip-events.js';
+import TripController from './controller/trip.js';
 import DayListComponent from './components/day-list.js';
 import InfoComponent from './components/info.js';
 import {render, RenderPosition} from './utils/render.js';
@@ -27,7 +27,7 @@ const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 const dayListComponent = new DayListComponent();
 render(tripEventsElement, dayListComponent, RenderPosition.BEFOREEND);
 
-const dayListController = new DayListController(dayListComponent);
+const tripController = new TripController(dayListComponent);
 
 // генерируем карточки точек маршрута
 const cards = generateCards(CARD_COUNT);
@@ -37,7 +37,7 @@ const tripInfoElement = document.querySelector(`.trip-info`);
 const infoComponent = new InfoComponent(cards);
 render(tripInfoElement, infoComponent, RenderPosition.AFTERBEGINING);
 
-dayListController.render(cards);
+tripController.render(cards);
 
 
 // создаем разметку для заведения новой карточки точки маршрута

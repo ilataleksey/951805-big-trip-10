@@ -1,48 +1,13 @@
 import DayComponent from '../components/day.js';
 import EventListComponent from '../components/event-list.js';
 import EventComponent from '../components/event.js';
-import EditCardComponent from '../components/edit-card.js';
-import CardComponent from '../components/card.js';
-import {render, replace, RenderPosition} from '../utils/render.js';
+import {render, RenderPosition} from '../utils/render.js';
 import NoCardComponent from '../components/no-card.js';
 import SortComponent, {SortType} from '../components/sort.js';
 import {formatTimeHTMLShort} from '../utils/common.js';
+import PointController from './point.js';
 
-// функция для генерации карточки точки маршрута внутри дня
-const renderCard = (eventListElement, card, i) => {
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-    if (isEscKey) {
-      evt.preventDefault();
-      replaceEditToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  const replaceCardToEdit = () => {
-    replace(editCardComponent, cardComponent);
-  };
-
-  const replaceEditToCard = () => {
-    replace(cardComponent, editCardComponent);
-  };
-
-  const cardComponent = new CardComponent(card);
-
-  cardComponent.setEditButtonClickHandler(() => {
-    replaceCardToEdit();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  const editCardComponent = new EditCardComponent(card, i);
-
-  editCardComponent.setSubmitHandler(replaceEditToCard);
-
-  render(eventListElement, cardComponent, RenderPosition.BEFOREEND);
-};
-
-export default class DayListController {
+export default class TripController {
   constructor(container) {
     this._container = container;
 
@@ -61,7 +26,6 @@ export default class DayListController {
     if (isNoCards) {
       // при отсутствии карточек маршрута выводится заглушка
       render(container, this._noCardComponent, RenderPosition.BEFOREEND);
-      return;
     } else {
 
       // добавляет в разметку дни и точки маршрута в соответствии с карточками
@@ -103,7 +67,9 @@ export default class DayListController {
 
           // рендерим карточку точки маршрута в список событий
           const eventListElement = this._eventListComponent.getElement();
-          renderCard(eventListElement, card, i);
+
+          const pointController = new PointController(eventListElement);
+          pointController.render(card, i);
         });
 
         render(container, this._sortComponent, RenderPosition.AFTERBEGINING);
