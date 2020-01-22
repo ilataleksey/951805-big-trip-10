@@ -32,10 +32,12 @@ const tripController = new TripController(dayListComponent);
 // генерируем карточки точек маршрута
 const cards = generateCards(CARD_COUNT);
 
-// создает разметку с информацией о поездке
-const tripInfoElement = document.querySelector(`.trip-info`);
-const infoComponent = new InfoComponent(cards);
-render(tripInfoElement, infoComponent, RenderPosition.AFTERBEGINING);
+if (cards.length !== 0) {
+  // создает разметку с информацией о поездке
+  const tripInfoElement = document.querySelector(`.trip-info`);
+  const infoComponent = new InfoComponent(cards);
+  render(tripInfoElement, infoComponent, RenderPosition.AFTERBEGINING);
+}
 
 tripController.render(cards);
 
