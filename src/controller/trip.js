@@ -1,67 +1,38 @@
 import DayComponent from '../components/day.js';
 import EventListComponent from '../components/event-list.js';
 import EventComponent from '../components/event.js';
-import EditCardComponent from '../components/edit-card.js';
-import CardComponent from '../components/card.js';
-import {render, replace, RenderPosition} from '../utils/render.js';
+import {render, RenderPosition} from '../utils/render.js';
 import NoCardComponent from '../components/no-card.js';
 import SortComponent, {SortType} from '../components/sort.js';
 import {formatTimeHTMLShort} from '../utils/common.js';
+import PointController from './point.js';
 
-// функция для генерации карточки точки маршрута внутри дня
-const renderCard = (eventListElement, card, i) => {
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-    if (isEscKey) {
-      evt.preventDefault();
-      replaceEditToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  const replaceCardToEdit = () => {
-    replace(editCardComponent, cardComponent);
-  };
-
-  const replaceEditToCard = () => {
-    replace(cardComponent, editCardComponent);
-  };
-
-  const cardComponent = new CardComponent(card);
-
-  cardComponent.setEditButtonClickHandler(() => {
-    replaceCardToEdit();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  const editCardComponent = new EditCardComponent(card, i);
-
-  editCardComponent.setSubmitHandler(replaceEditToCard);
-
-  render(eventListElement, cardComponent, RenderPosition.BEFOREEND);
-};
-
-export default class DayListController {
+export default class TripController {
   constructor(container) {
     this._container = container;
+
+    this._cards = [];
+    this._renderedCards = [];
 
     this._noCardComponent = new NoCardComponent();
     this._sortComponent = new SortComponent();
     this._dayComponent = new DayComponent();
     this._eventListComponent = new EventListComponent();
     this._eventComponent = new EventComponent();
+
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
   }
 
   render(cards) {
+    this._cards = cards;
     const container = this._container.getElement();
 
     // проверяем наличие карточек
-    const isNoCards = cards.length === 0;
+    const isNoCards = this._cards.length === 0;
     if (isNoCards) {
       // при отсутствии карточек маршрута выводится заглушка
       render(container, this._noCardComponent, RenderPosition.BEFOREEND);
-      return;
     } else {
 
       // добавляет в разметку дни и точки маршрута в соответствии с карточками
@@ -103,7 +74,10 @@ export default class DayListController {
 
           // рендерим карточку точки маршрута в список событий
           const eventListElement = this._eventListComponent.getElement();
-          renderCard(eventListElement, card, i);
+
+          const pointController = new PointController(eventListElement, this._onDataChange, this._onViewChange);
+          pointController.render(card, i);
+          this._renderedCards = this._renderedCards.concat(pointController);
         });
 
         render(container, this._sortComponent, RenderPosition.AFTERBEGINING);
@@ -112,15 +86,15 @@ export default class DayListController {
 
           switch (sortType) {
             case SortType.EVENT:
-              sortedCards = cards;
+              sortedCards = this._cards;
               isDayCount = true;
               break;
             case SortType.PRICE:
-              sortedCards = cards.slice().sort((a, b) => b.price - a.price);
+              sortedCards = this._cards.slice().sort((a, b) => b.price - a.price);
               isDayCount = false;
               break;
             case SortType.DURATION:
-              sortedCards = cards.slice().sort((a, b) => b.dates.duration - a.dates.duration);
+              sortedCards = this._cards.slice().sort((a, b) => b.dates.duration - a.dates.duration);
               isDayCount = false;
               break;
           }
@@ -131,8 +105,24 @@ export default class DayListController {
         });
       };
 
-      renderCards(cards, true);
+      renderCards(this._cards, true);
     }
+  }
+
+  _onDataChange(pointController, oldData, newData) {
+    const cardIndex = this._cards.findIndex((it) => it === oldData);
+
+    if (cardIndex === -1) {
+      return;
+    }
+
+    this._cards = [].concat(this._cards.slice(0, cardIndex), newData, this._cards.slice(cardIndex + 1));
+
+    pointController.render(this._cards[cardIndex], cardIndex);
+  }
+
+  _onViewChange() {
+    this._renderedCards.forEach((card) => card.setDefaultView());
   }
 }
 

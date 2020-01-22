@@ -76,12 +76,14 @@ const generatePhotos = (url) => {
 const generateCard = () => {
   return {
     type: getRandomArrayItem(TYPES),
-    city: getRandomArrayItem(CITIES),
+    destination: {
+      city: getRandomArrayItem(CITIES),
+      description: generateDestination(DESTINATIONS),
+    },
     dates: getRandomDates(),
     price: getRandomIntegerNumber(PRICE.min, PRICE.max),
     isFavorite: Math.random() > 0.5,
     offers: generateOffers(OFFERS),
-    dest: generateDestination(DESTINATIONS),
     photos: generatePhotos(URL),
   };
 };

@@ -5,7 +5,7 @@ export const TYPES = [
   },
   {
     action: `check-in`,
-    description: `Check into `,
+    description: `Check-In in `,
   },
   {
     action: `drive`,
@@ -25,7 +25,7 @@ export const TYPES = [
   },
   {
     action: `sightseeing`,
-    description: `Sightseeing at `,
+    description: `Sightseeing in `,
   },
   {
     action: `taxi`,
