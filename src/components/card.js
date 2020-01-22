@@ -18,7 +18,7 @@ const createOffersMarkup = (additionOffers) => {
 };
 
 export const createCardTemplate = (card) => {
-  const {type, city, dates, price, offers} = card;
+  const {type, destination, dates, price, offers} = card;
 
   const startTimeShort = formatTimeShort(dates.start);
   const endTimeShort = formatTimeShort(dates.end);
@@ -36,7 +36,7 @@ export const createCardTemplate = (card) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.action}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type.description} ${city}</h3>
+        <h3 class="event__title">${type.description} ${destination.city}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -76,11 +76,6 @@ export default class Card extends AbstractComponent {
   }
 
   setEditButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, handler);
-  }
-
-  setEditCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
   }
