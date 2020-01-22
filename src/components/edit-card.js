@@ -1,5 +1,16 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {formatTime} from '../utils/common.js';
+import {CITIES} from '../const.js';
+
+const getCitiesMarkup = (cities) => {
+  return cities
+    .map((city) => {
+      return (
+        `<option value="${city}"></option>`
+      );
+    })
+    .join(`\n`);
+};
 
 export const createOffersMarkup = (additionOffers, i) => {
   return additionOffers
@@ -29,11 +40,12 @@ export const createPhotoMarkup = (photos) => {
 };
 
 const createEditCardFormTemplate = (card, i) => {
-  const {type, city, dates, price, isFavorite, offers, dest, photos} = card;
+  const {type, destination, dates, price, isFavorite, offers, photos} = card;
 
   const startTime = formatTime(dates.start);
   const endTime = formatTime(dates.end);
   const addOffers = createOffersMarkup(Array.from(offers), i);
+  const cities = getCitiesMarkup(CITIES);
 
   const eventPhoto = createPhotoMarkup(photos);
 
@@ -54,7 +66,7 @@ const createEditCardFormTemplate = (card, i) => {
 
                 <div class="event__type-item">
                   <input id="event-type-taxi-${i}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-                  <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-${i}">Taxi</label>
+                  <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-${i}" ${type.action === `taxi` ? `checked` : ``}>Taxi</label>
                 </div>
 
                 <div class="event__type-item">
@@ -113,11 +125,9 @@ const createEditCardFormTemplate = (card, i) => {
             <label class="event__label  event__type-output" for="event-destination-${i}">
               ${type.description}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${i}" type="text" name="event-destination" value="${city}" list="destination-list-${i}">
+            <input class="event__input  event__input--destination" id="event-destination-${i}" type="text" name="event-destination" value="${destination.city}" list="destination-list-${i}">
             <datalist id="destination-list-${i}">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              ${cities}
             </datalist>
           </div>
 
@@ -169,7 +179,7 @@ const createEditCardFormTemplate = (card, i) => {
 
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${dest}</p>
+            <p class="event__destination-description">${destination.description}</p>
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
@@ -183,12 +193,17 @@ const createEditCardFormTemplate = (card, i) => {
   );
 };
 
-export default class EditCard extends AbstractComponent {
+export default class EditCard extends AbstractSmartComponent {
   constructor(card, i) {
     super();
 
     this._card = card;
     this._index = i + 1;
+
+    this._submitHandler = null;
+    this._favoritButtonHandler = null;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -198,5 +213,60 @@ export default class EditCard extends AbstractComponent {
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`)
       .addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
+  }
+
+  setFavoritButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, handler);
+
+    this._favoritButtonHandler = handler;
+  }
+
+  setTypeInputChangeHandler(handler) {
+    this.getElement().querySelector(`.event__type-toggle`)
+      .addEventListener(`change`, handler);
+
+    this._typeInputHandler = handler;
+  }
+
+  setDestinationInputChangeHandler(handler) {
+    this.getElement().querySelector(`.event__input--destination`)
+      .addEventListener(`change`, handler);
+
+    this._destinationInputHandler = handler;
+  }
+
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this.setFavoritButtonClickHandler(this._favoritButtonHandler);
+
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__type-list`)
+      .addEventListener(`click`, (evt) => {
+        const typeInputElement = evt.target.parentElement.querySelector(`input`);
+        this._card.type.action = typeInputElement.value;
+
+        this._card.type.description = evt.target.innerHTML;
+        this.rerender();
+      });
+
+    element.querySelector(`.event__input--destination`)
+      .addEventListener(`focusout`, (evt) => {
+        this._card.destination.city = evt.target.value;
+        this._card.destination.description = evt.target.value;
+
+        this.rerender();
+      });
   }
 }
