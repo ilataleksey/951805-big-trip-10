@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {formatTime, formatDate, duration} from '../utils/common.js';
+import {formatTime, formatDate} from '../utils/common.js';
 import {CITIES} from '../const.js';
 import flatpickr from 'flatpickr';
 
