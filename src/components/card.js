@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {formatTimeShort, formatTimeHTML, getDuration} from '../utils/common.js';
+import {formatTime, formatDateHTML, duration} from '../utils/common.js';
 
 const createOffersMarkup = (additionOffers) => {
   return additionOffers
@@ -20,14 +20,17 @@ const createOffersMarkup = (additionOffers) => {
 export const createCardTemplate = (card) => {
   const {type, destination, dates, price, offers} = card;
 
-  const startTimeShort = formatTimeShort(dates.start);
-  const endTimeShort = formatTimeShort(dates.end);
-  const startTimeHTML = formatTimeHTML(dates.start);
-  const endTimeHTML = formatTimeHTML(dates.end);
+  const startTime = formatTime(dates.start);
+  const endTime = formatTime(dates.end);
+  const startTimeHTML = `${formatDateHTML(dates.start)}T${formatTime(dates.start)}`;
+  const endTimeHTML = `${formatDateHTML(dates.end)}T${formatTime(dates.end)}`;
 
-  const durationD = getDuration(dates).days;
-  const durationH = getDuration(dates).hours;
-  const durationM = getDuration(dates).minutes;
+  let durationD = duration(dates.duration, `days`);
+  durationD = durationD ? `${durationD}D` : ``;
+  let durationH = duration(dates.duration, `hours`);
+  durationH = durationH ? `${durationH}H` : ``;
+  let durationM = duration(dates.duration, `minutes`);
+  durationM = durationM ? `${durationM}M` : ``;
 
   const addOffers = createOffersMarkup(Array.from(offers));
   return (
@@ -40,9 +43,9 @@ export const createCardTemplate = (card) => {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${startTimeHTML}">${startTimeShort}</time>
+            <time class="event__start-time" datetime="${startTimeHTML}">${startTime}</time>
             &mdash;
-            <time class="event__end-time" datetime="${endTimeHTML}">${endTimeShort}</time>
+            <time class="event__end-time" datetime="${endTimeHTML}">${endTime}</time>
           </p>
           <p class="event__duration">${durationD} ${durationH} ${durationM}</p>
         </div>
