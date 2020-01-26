@@ -70,6 +70,9 @@ export default class TripController {
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
+
+    this._pointsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
@@ -138,6 +141,11 @@ export default class TripController {
 
   _onViewChange() {
     this._renderedPoints.forEach((point) => point.setDefaultView());
+  }
+
+  _onFilterChange() {
+    this._removePoints();
+    this._renderPoints(this._pointsModel.getTasks());
   }
 }
 
