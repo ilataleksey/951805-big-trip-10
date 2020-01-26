@@ -1,5 +1,5 @@
 import MenuComponent from './components/menu.js';
-import FilterComponent from './components/filter.js';
+import FilterController from './controller/filter.js';
 import TripController from './controller/trip.js';
 import DayListComponent from './components/day-list.js';
 import InfoComponent from './components/info.js';
@@ -7,7 +7,6 @@ import PointsModel from './models/points.js';
 import {render, RenderPosition} from './utils/render.js';
 import {generatePoints} from './mock/card.js';
 import {tabs} from './mock/menu.js';
-import {filterElements} from './mock/filter.js';
 
 // import {NEW_CARDS} from './const.js';
 // import NewCardComponent from './components/new-card.js';
@@ -16,10 +15,17 @@ const POINTS_COUNT = 4;
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 
+// генерируем карточки точек маршрута
+const points = generatePoints(POINTS_COUNT);
+const pointsModel = new PointsModel();
+pointsModel.setPoints(points);
+
 // создаем разметку для меню и фильтра
 const tripControlElement = siteHeaderElement.querySelector(`.trip-controls`);
 render(tripControlElement, new MenuComponent(tabs), RenderPosition.BEFOREEND);
-render(tripControlElement, new FilterComponent(filterElements), RenderPosition.BEFOREEND);
+
+const filterController = new FilterController(tripControlElement, pointsModel);
+filterController.render();
 
 // создаем разметку списка сущесвующих точек маршрута
 const siteMainElement = document.querySelector(`.page-main`);
@@ -27,11 +33,6 @@ const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
 const dayListComponent = new DayListComponent();
 render(tripEventsElement, dayListComponent, RenderPosition.BEFOREEND);
-
-// генерируем карточки точек маршрута
-const points = generatePoints(POINTS_COUNT);
-const pointsModel = new PointsModel();
-pointsModel.setPoints(points);
 
 const tripController = new TripController(dayListComponent, pointsModel);
 
