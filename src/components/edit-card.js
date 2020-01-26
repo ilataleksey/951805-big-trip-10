@@ -1,6 +1,7 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {formatTime} from '../utils/common.js';
+import {formatTime, formatDate} from '../utils/common.js';
 import {CITIES} from '../const.js';
+import flatpickr from 'flatpickr';
 
 const getCitiesMarkup = (cities) => {
   return cities
@@ -40,10 +41,8 @@ export const createPhotoMarkup = (photos) => {
 };
 
 const createEditCardFormTemplate = (card, i) => {
-  const {type, destination, dates, price, isFavorite, offers, photos} = card;
+  const {type, destination, price, isFavorite, offers, photos} = card;
 
-  const startTime = formatTime(dates.start);
-  const endTime = formatTime(dates.end);
   const addOffers = createOffersMarkup(Array.from(offers), i);
   const cities = getCitiesMarkup(CITIES);
 
@@ -135,12 +134,12 @@ const createEditCardFormTemplate = (card, i) => {
             <label class="visually-hidden" for="event-start-time-${i}">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-${i}" type="text" name="event-start-time" value="${startTime}">
+            <input class="event__input  event__input--time" id="event-start-time-${i}" type="text" name="event-start-time" value="">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-${i}" type="text" name="event-end-time" value="${endTime}">
+            <input class="event__input  event__input--time" id="event-end-time-${i}" type="text" name="event-end-time" value="">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -202,8 +201,12 @@ export default class EditCard extends AbstractSmartComponent {
 
     this._submitHandler = null;
     this._favoritButtonHandler = null;
+    this._flatpickrStart = null;
+    this._flatpickrEnd = null;
 
     this._subscribeOnEvents();
+    this._applyFlatpickrStart();
+    this._applyFlatpickrEnd();
   }
 
   getTemplate() {
@@ -247,6 +250,9 @@ export default class EditCard extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+
+    this._applyFlatpickrStart();
+    this._applyFlatpickrEnd();
   }
 
   _subscribeOnEvents() {
@@ -268,5 +274,53 @@ export default class EditCard extends AbstractSmartComponent {
 
         this.rerender();
       });
+
+    element.querySelector(`input[name=event-start-time]`)
+      .addEventListener(`change`, (evt) => {
+        this._card.dates.start = new Date(evt.target.value);
+        this._card.dates.duration = this._card.dates.end - this._card.dates.start;
+        this.rerender();
+      });
+
+    element.querySelector(`input[name=event-end-time]`)
+      .addEventListener(`change`, (evt) => {
+        this._card.dates.end = new Date(evt.target.value);
+        this._card.dates.duration = this._card.dates.end - this._card.dates.start;
+        this.rerender();
+      });
+  }
+
+  _applyFlatpickrStart() {
+    if (this._flatpickrStart) {
+      // При своем создании `flatpickr` дополнительно создает вспомогательные DOM-элементы.
+      // Что бы их удалять, нужно вызывать метод `destroy` у созданного инстанса `flatpickr`.
+      this._flatpickrStart.destroy();
+      this._flatpickrStart = null;
+    }
+
+    const dateStartElement = this.getElement().querySelector(`input[name=event-start-time]`);
+    this._flatpickrStart = flatpickr(dateStartElement, {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._card.dates.start,
+      altFormat: `d/m/y H:i`,
+    });
+  }
+
+  _applyFlatpickrEnd() {
+    if (this._flatpickrEnd) {
+      // При своем создании `flatpickr` дополнительно создает вспомогательные DOM-элементы.
+      // Что бы их удалять, нужно вызывать метод `destroy` у созданного инстанса `flatpickr`.
+      this._flatpickrEnd.destroy();
+      this._flatpickrEnd = null;
+    }
+
+    const dateEndElement = this.getElement().querySelector(`input[name=event-end-time]`);
+    this._flatpickrEnd = flatpickr(dateEndElement, {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._card.dates.end,
+      altFormat: `d/m/y H:i`,
+    });
   }
 }

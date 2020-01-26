@@ -4,7 +4,7 @@ import EventComponent from '../components/event.js';
 import {render, RenderPosition} from '../utils/render.js';
 import NoCardComponent from '../components/no-card.js';
 import SortComponent, {SortType} from '../components/sort.js';
-import {formatTimeHTMLShort} from '../utils/common.js';
+import {formatDateHTML} from '../utils/common.js';
 import PointController from './point.js';
 
 export default class TripController {
@@ -59,7 +59,7 @@ export default class TripController {
           if (isDayCount) {
             // проверяем дату текущей карточки на совпадение предыдущей
             date = card.dates.start;
-            if (i === 0 || formatTimeHTMLShort(date) !== formatTimeHTMLShort(array[i - 1].dates.start)) {
+            if (i === 0 || formatDateHTML(date) !== formatDateHTML(array[i - 1].dates.start)) {
               // создаем новый день
               dayNumber++;
               dayComponent = new DayComponent(dayNumber, date);

@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import {MONTHS} from '../const.js';
-import {formatTimeHTMLShort} from '../utils/common.js';
+import {formatDateHTML} from '../utils/common.js';
 
 const createDayTemplate = (dayNumber, date) => {
 
@@ -8,7 +8,7 @@ const createDayTemplate = (dayNumber, date) => {
 
   if (dayNumber !== 0) {
     const day = `${MONTHS[date.getMonth()].toUpperCase()} ${date.getDate()}`;
-    const dayHTML = formatTimeHTMLShort(date);
+    const dayHTML = formatDateHTML(date);
 
     dayTemplate = (
       `<span class="day__counter">${dayNumber}</span>
