@@ -75,6 +75,7 @@ const generatePhotos = (url) => {
 
 const generateCard = () => {
   return {
+    id: String(new Date() + Math.random()),
     type: getRandomArrayItem(TYPES),
     destination: {
       city: getRandomArrayItem(CITIES),
