@@ -28,12 +28,12 @@ const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 const dayListComponent = new DayListComponent();
 render(tripEventsElement, dayListComponent, RenderPosition.BEFOREEND);
 
-const tripController = new TripController(dayListComponent);
-
 // генерируем карточки точек маршрута
 const cards = generateCards(CARD_COUNT);
 const cardsModel = new CardsModel();
 cardsModel.setCards(cards);
+
+const tripController = new TripController(dayListComponent, cardsModel);
 
 if (cards.length !== 0) {
   // создает разметку с информацией о поездке
@@ -42,7 +42,7 @@ if (cards.length !== 0) {
   render(tripInfoElement, infoComponent, RenderPosition.AFTERBEGINING);
 }
 
-tripController.render(cards);
+tripController.render();
 
 
 // создаем разметку для заведения новой карточки точки маршрута
