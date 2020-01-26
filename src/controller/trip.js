@@ -15,6 +15,8 @@ const renderDay = (container, dayNumber, date) => {
   const dayElement = dayComponent.getElement();
   const eventListComponent = new EventListComponent();
   render(dayElement, eventListComponent, RenderPosition.BEFOREEND);
+
+  return eventListComponent.getElement();
 };
 
 // добавляет в разметку дни и точки маршрута в соответствии с карточками
@@ -25,7 +27,7 @@ const renderCards = (container, cards, isDayCount, onDataChange, onViewChange) =
 
   // по-умолчанию рендерится день
   // в него дня рендерится список событий
-  renderDay(container, dayNumber, date);
+  let eventListElement = renderDay(container, dayNumber, date);
 
   if (isDayCount) {
     // зачищаем разметку
@@ -40,13 +42,11 @@ const renderCards = (container, cards, isDayCount, onDataChange, onViewChange) =
       if (i === 0 || !isOneDay(date, array[i - 1].dates.start)) {
         // создаем новый день
         dayNumber++;
-        renderDay(container, dayNumber, date);
+        eventListElement = renderDay(container, dayNumber, date);
       }
     }
 
     // рендерим карточку точки маршрута в список событий
-    const eventListElement = new EventListComponent().getElement();
-
     const pointController = new PointController(eventListElement, onDataChange, onViewChange);
     pointController.render(card, i);
     newCards.concat(pointController);
@@ -94,7 +94,7 @@ export default class TripController {
   }
 
   _renderCards(cards) {
-    const container = this._container;
+    const container = this._container.getElement();
 
     const newCards = renderCards(container, cards, this._isDayCount, this._onDataChange, this._onViewChange);
     this._renderedCards = this._renderedCards.concat(newCards);
