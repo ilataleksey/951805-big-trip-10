@@ -3,16 +3,16 @@ import FilterComponent from './components/filter.js';
 import TripController from './controller/trip.js';
 import DayListComponent from './components/day-list.js';
 import InfoComponent from './components/info.js';
-import CardsModel from './models/cards.js';
+import PointsModel from './models/points.js';
 import {render, RenderPosition} from './utils/render.js';
-import {generateCards} from './mock/card.js';
+import {generatePoints} from './mock/card.js';
 import {tabs} from './mock/menu.js';
 import {filterElements} from './mock/filter.js';
 
 // import {NEW_CARDS} from './const.js';
 // import NewCardComponent from './components/new-card.js';
 
-const CARD_COUNT = 4;
+const POINTS_COUNT = 4;
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 
@@ -29,16 +29,16 @@ const dayListComponent = new DayListComponent();
 render(tripEventsElement, dayListComponent, RenderPosition.BEFOREEND);
 
 // генерируем карточки точек маршрута
-const cards = generateCards(CARD_COUNT);
-const cardsModel = new CardsModel();
-cardsModel.setCards(cards);
+const points = generatePoints(POINTS_COUNT);
+const pointsModel = new PointsModel();
+pointsModel.setPoints(points);
 
-const tripController = new TripController(dayListComponent, cardsModel);
+const tripController = new TripController(dayListComponent, pointsModel);
 
-if (cards.length !== 0) {
+if (points.length !== 0) {
   // создает разметку с информацией о поездке
   const tripInfoElement = document.querySelector(`.trip-info`);
-  const infoComponent = new InfoComponent(cards);
+  const infoComponent = new InfoComponent(points);
   render(tripInfoElement, infoComponent, RenderPosition.AFTERBEGINING);
 }
 

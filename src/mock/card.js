@@ -73,7 +73,7 @@ const generatePhotos = (url) => {
     });
 };
 
-const generateCard = () => {
+const generatePoint = () => {
   return {
     id: String(new Date() + Math.random()),
     type: getRandomArrayItem(TYPES),
@@ -89,13 +89,13 @@ const generateCard = () => {
   };
 };
 
-const generateCards = (count) => {
+const generatePoints = (count) => {
   return new Array(count)
     .fill(``)
-    .map(generateCard)
+    .map(generatePoint)
     .sort((a, b) => {
       return a.dates.start - b.dates.start;
     });
 };
 
-export {generateCard, generateCards};
+export {generatePoint, generatePoints};

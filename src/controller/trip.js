@@ -2,7 +2,7 @@ import DayComponent from '../components/day.js';
 import EventListComponent from '../components/event-list.js';
 import EventComponent from '../components/event.js';
 import {render, RenderPosition} from '../utils/render.js';
-import NoCardComponent from '../components/no-card.js';
+import NoPointComponent from '../components/no-card.js';
 import SortComponent, {SortType} from '../components/sort.js';
 import {isOneDay} from '../utils/common.js';
 import PointController from './point.js';
@@ -20,8 +20,8 @@ const renderDay = (container, dayNumber, date) => {
 };
 
 // добавляет в разметку дни и точки маршрута в соответствии с карточками
-const renderCards = (container, cards, isDayCount, onDataChange, onViewChange) => {
-  const newCards = [];
+const renderPoints = (container, points, isDayCount, onDataChange, onViewChange) => {
+  const newPoints = [];
   let dayNumber = 0;
   let date = ``;
 
@@ -34,11 +34,11 @@ const renderCards = (container, cards, isDayCount, onDataChange, onViewChange) =
     container.innerHTML = ``;
   }
 
-  cards.forEach((card, i, array) => {
+  points.forEach((point, i, array) => {
     // проверяем включен ли счет дней
     if (isDayCount) {
       // проверяем дату текущей карточки на совпадение предыдущей
-      date = card.dates.start;
+      date = point.dates.start;
       if (i === 0 || !isOneDay(date, array[i - 1].dates.start)) {
         // создаем новый день
         dayNumber++;
@@ -48,22 +48,22 @@ const renderCards = (container, cards, isDayCount, onDataChange, onViewChange) =
 
     // рендерим карточку точки маршрута в список событий
     const pointController = new PointController(eventListElement, onDataChange, onViewChange);
-    pointController.render(card, i);
-    newCards.concat(pointController);
+    pointController.render(point, i);
+    newPoints.concat(pointController);
   });
 
-  return newCards;
+  return newPoints;
 };
 
 export default class TripController {
-  constructor(container, cardsModel) {
+  constructor(container, pointsModel) {
     this._container = container;
-    this._cardsModel = cardsModel;
+    this._pointsModel = pointsModel;
 
-    this._renderedCards = [];
+    this._renderedPoints = [];
     this._isDayCount = true;
 
-    this._noCardComponent = new NoCardComponent();
+    this._noPointComponent = new NoPointComponent();
     this._sortComponent = new SortComponent();
     this._dayComponent = new DayComponent();
     this._eventComponent = new EventComponent();
@@ -73,70 +73,71 @@ export default class TripController {
   }
 
   render() {
-    const cards = this._cardsModel.getCards();
+    const points = this._pointsModel.getPoints();
     const container = this._container.getElement();
 
     // проверяем наличие карточек
-    const isNoCards = cards.length === 0;
-    if (isNoCards) {
+    const isNoPoints = points.length === 0;
+    if (isNoPoints) {
       // при отсутствии карточек маршрута выводится заглушка
-      render(container, this._noCardComponent, RenderPosition.BEFOREEND);
+      render(container, this._noPointComponent, RenderPosition.BEFOREEND);
     } else {
       render(container, this._sortComponent, RenderPosition.AFTERBEGINING);
 
-      this._renderCards(cards);
+      this._renderPoints(points);
     }
   }
 
-  _removeCards() {
-    this._renderCards.forEach((card) => card.destroy());
-    this._renderCards = [];
+  _removePoints() {
+    this._renderPoints.forEach((point) => point.destroy());
+    this._renderPoints = [];
   }
 
-  _renderCards(cards) {
+  _renderPoints(points) {
     const container = this._container.getElement();
 
-    const newCards = renderCards(container, cards, this._isDayCount, this._onDataChange, this._onViewChange);
-    this._renderedCards = this._renderedCards.concat(newCards);
+    const newPoints = renderPoints(container, points, this._isDayCount, this._onDataChange, this._onViewChange);
+    this._renderedPoints = this._renderedPoints.concat(newPoints);
   }
 
   _onSortTypeChange(sortType) {
-    let sortedCards = [];
-    const cards = this._cardsModel.getCards();
+    let sortedPoints = [];
+    const points = this._PointsModel.getPoints();
 
     switch (sortType) {
       case SortType.EVENT:
-        sortedCards = cards;
+        sortedPoints = points;
         this._isDayCount = true;
         break;
       case SortType.PRICE:
-        sortedCards = cards.slice().sort((a, b) => b.price - a.price);
+        sortedPoints = points.slice().sort((a, b) => b.price - a.price);
         this._isDayCount = false;
         break;
       case SortType.DURATION:
-        sortedCards = cards.slice().sort((a, b) => b.dates.duration - a.dates.duration);
+        sortedPoints = points.slice().sort((a, b) => b.dates.duration - a.dates.duration);
         this._isDayCount = false;
         break;
     }
 
-    this._removeCards();
-    this._renderCards(sortedCards);
+    this._removePoints();
+    this._renderPoints(sortedPoints);
   }
 
   _onDataChange(pointController, oldData, newData) {
-    const cardIndex = this._cards.findIndex((it) => it === oldData);
+    const points = this._pointsModel.getPoints();
+    const pointIndex = points.findIndex((it) => it === oldData);
 
-    if (cardIndex === -1) {
+    if (pointIndex === -1) {
       return;
     }
 
-    this._cards = [].concat(this._cards.slice(0, cardIndex), newData, this._cards.slice(cardIndex + 1));
+    points = [].concat(points.slice(0, pointIndex), newData, points.slice(pointIndex + 1));
 
-    pointController.render(this._cards[cardIndex], cardIndex);
+    pointController.render(points[pointIndex], pointIndex);
   }
 
   _onViewChange() {
-    this._renderedCards.forEach((card) => card.setDefaultView());
+    this._renderedPoints.forEach((point) => point.setDefaultView());
   }
 }
 
