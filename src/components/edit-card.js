@@ -138,12 +138,12 @@ const createEditCardFormTemplate = (card, i) => {
             <label class="visually-hidden" for="event-start-time-${i}">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-${i}" type="text" name="event-start-time" value="${startDate} ${startTime}">
+            <input class="event__input  event__input--time" id="event-start-time-${i}" type="text" name="event-start-time" value="">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-${i}" type="text" name="event-end-time" value="${endDate} ${endTime}">
+            <input class="event__input  event__input--time" id="event-end-time-${i}" type="text" name="event-end-time" value="">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -307,6 +307,7 @@ export default class EditCard extends AbstractSmartComponent {
       altInput: true,
       allowInput: true,
       defaultDate: this._card.dates.start,
+      altFormat: `d/m/y H:i`,
     });
   }
 
@@ -323,6 +324,7 @@ export default class EditCard extends AbstractSmartComponent {
       altInput: true,
       allowInput: true,
       defaultDate: this._card.dates.end,
+      altFormat: `d/m/y H:i`,
     });
   }
 }
