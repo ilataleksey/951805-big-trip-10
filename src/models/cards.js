@@ -1,4 +1,4 @@
-export default class CardsModule {
+export default class Cards {
   constructor() {
     this._cards = [];
   }

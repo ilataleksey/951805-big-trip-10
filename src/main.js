@@ -3,6 +3,7 @@ import FilterComponent from './components/filter.js';
 import TripController from './controller/trip.js';
 import DayListComponent from './components/day-list.js';
 import InfoComponent from './components/info.js';
+import CardsModel from './models/cards.js';
 import {render, RenderPosition} from './utils/render.js';
 import {generateCards} from './mock/card.js';
 import {tabs} from './mock/menu.js';
@@ -31,6 +32,8 @@ const tripController = new TripController(dayListComponent);
 
 // генерируем карточки точек маршрута
 const cards = generateCards(CARD_COUNT);
+const cardsModel = new CardsModel();
+cardsModel.setCards(cards);
 
 if (cards.length !== 0) {
   // создает разметку с информацией о поездке
