@@ -14,14 +14,19 @@ const createInfoTemplate = (cards) => {
   const lastCity = cities[citiesList.size - 1];
   let rout = ``;
 
-  if (citiesList.size === 1) {
-    rout = `${firstCity}`;
-  } else if (citiesList.size === 2) {
-    rout = `${firstCity} &mdash; ${lastCity}`;
-  } else if (citiesList.size === 3) {
-    rout = `${firstCity} &mdash; ${secondCity} &mdash; ${lastCity}`;
-  } else {
-    rout = `${firstCity} &mdash; ... &mdash; ${lastCity}`;
+  switch (citiesList.size) {
+    case 1:
+      rout = `${firstCity}`;
+      break;
+    case 2:
+      rout = `${firstCity} &mdash; ${lastCity}`;
+      break;
+    case 3:
+      rout = `${firstCity} &mdash; ${secondCity} &mdash; ${lastCity}`;
+      break;
+    default:
+      rout = `${firstCity} &mdash; ... &mdash; ${lastCity}`;
+      break;
   }
 
   const start = `${MONTHS[cards[0].dates.start.getMonth()].toUpperCase()} ${cards[0].dates.start.getDate()}`;
