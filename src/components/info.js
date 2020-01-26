@@ -5,7 +5,7 @@ const createInfoTemplate = (cards) => {
 
   const citiesList = new Set();
   cards.forEach((card) => {
-    citiesList.add(card.city);
+    citiesList.add(card.destination.city);
   });
 
   const cities = Array.from(citiesList);
