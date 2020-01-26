@@ -41,12 +41,8 @@ export const createPhotoMarkup = (photos) => {
 };
 
 const createEditCardFormTemplate = (card, i) => {
-  const {type, destination, dates, price, isFavorite, offers, photos} = card;
+  const {type, destination, price, isFavorite, offers, photos} = card;
 
-  const startTime = formatTime(dates.start);
-  const startDate = formatDate(dates.start);
-  const endDate = formatDate(dates.end);
-  const endTime = formatTime(dates.end);
   const addOffers = createOffersMarkup(Array.from(offers), i);
   const cities = getCitiesMarkup(CITIES);
 
