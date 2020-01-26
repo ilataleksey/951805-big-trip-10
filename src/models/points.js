@@ -16,7 +16,7 @@ export default class Points {
   }
 
   getPoints() {
-    return this.getPointsByFilter(this._points, this._activeFilterType);
+    return getPointsByFilter(this._points, this._activeFilterType);
   }
 
   setPoints(points) {
