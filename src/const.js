@@ -1,3 +1,9 @@
+export const FILTER_TYPE = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`,
+};
+
 export const TYPES = [
   {
     action: `bus`,
