@@ -33,7 +33,7 @@ const getRandomDates = () => {
   const diffValueEnd = getRandomIntegerNumber(0, 3 * MILSEC_IN_DAY);
   const diffValueAll = diffValueStart + diffValueEnd;
 
-  start.setMilliseconds(start.getMilliseconds() + diffValueStart);
+  start.setMilliseconds(start.getMilliseconds() + diffValueStart * (Math.random() > 0.5 ? 1 : -1));
   end.setMilliseconds(start.getMilliseconds() + diffValueAll);
 
   const duration = end - start;
