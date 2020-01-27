@@ -1,6 +1,6 @@
 import {render, replace, RenderPosition} from '../utils/render.js';
-import CardComponent from '../components/card.js';
-import EditCardComponent from '../components/edit-card.js';
+import PointComponent from '../components/card.js';
+import PointEditComponent from '../components/edit-card.js';
 
 const Mode = {
   DEFAULT: `default`,
@@ -14,41 +14,41 @@ export default class PointController {
     this._onViewChange = onViewChange;
     this._mode = Mode.DEFAULT;
 
-    this._cardComponent = null;
-    this._editCardComponent = null;
+    this._pointComponent = null;
+    this._pointEditComponent = null;
 
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
   // функция для генерации карточки точки маршрута внутри дня
-  render(card, i) {
-    const oldCardComponent = this._cardComponent;
-    const oldEditCardComponent = this._editCardComponent;
+  render(point, i) {
+    const oldPointComponent = this._pointComponent;
+    const oldPointEditComponent = this._pointEditComponent;
 
-    this._cardComponent = new CardComponent(card);
-    this._editCardComponent = new EditCardComponent(card, i);
+    this._pointComponent = new PointComponent(point);
+    this._pointEditComponent = new PointEditComponent(point, i);
 
-    this._cardComponent.setEditButtonClickHandler(() => {
-      this._replaceCardToEdit();
+    this._pointComponent.setEditButtonClickHandler(() => {
+      this._replacePointToEdit();
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._editCardComponent.setFavoritButtonClickHandler(() => {
-      this._onDataChange(this, card, Object.assign({}, card, {
-        isFavorite: !card.isFavorite,
+    this._pointEditComponent.setFavoritButtonClickHandler(() => {
+      this._onDataChange(this, point, Object.assign({}, point, {
+        isFavorite: !point.isFavorite,
       }));
     });
 
-    this._editCardComponent.setSubmitHandler((evt) => {
+    this._pointEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      this._replaceEditToCard();
+      this._replaceEditToPoint();
     });
 
-    if (oldEditCardComponent && oldCardComponent) {
-      replace(this._cardComponent, oldCardComponent);
-      replace(this._editCardComponent, oldEditCardComponent);
+    if (oldPointEditComponent && oldPointComponent) {
+      replace(this._pointComponent, oldPointComponent);
+      replace(this._pointEditComponent, oldPointEditComponent);
     } else {
-      render(this._container, this._cardComponent, RenderPosition.BEFOREEND);
+      render(this._container, this._pointComponent, RenderPosition.BEFOREEND);
     }
   }
 
@@ -57,27 +57,27 @@ export default class PointController {
 
     if (isEscKey) {
       evt.preventDefault();
-      this._replaceEditToCard();
+      this._replaceEditToPoint();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
 
-  _replaceCardToEdit() {
+  _replacePointToEdit() {
     this._onViewChange();
 
-    replace(this._editCardComponent, this._cardComponent);
+    replace(this._pointEditComponent, this._pointComponent);
     this._mode = Mode.EDIT;
   }
 
-  _replaceEditToCard() {
-    this._editCardComponent.rerender();
-    replace(this._cardComponent, this._editCardComponent);
+  _replaceEditToPoint() {
+    this._pointEditComponent.rerender();
+    replace(this._pointComponent, this._pointEditComponent);
     this._mode = Mode.DEFAULT;
   }
 
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceEditToCard();
+      this._replaceEditToPoint();
     }
   }
 }
