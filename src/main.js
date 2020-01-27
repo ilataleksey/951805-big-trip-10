@@ -15,6 +15,14 @@ const POINTS_COUNT = 4;
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 
+// Быстрое решение для подписки на клик по кнопке.
+// Это противоречит нашей архитектуре работы с DOM-элементами, но это временное решение.
+// Совсем скоро мы создадим полноценный компонент для работы с меню.
+siteHeaderElement.getElement().querySelector(`.trip-main__event-add-btn`)
+  .addEventListener(`click`, () => {
+    tripController.createPoint();
+  });
+
 // генерируем карточки точек маршрута
 const points = generatePoints(POINTS_COUNT);
 const pointsModel = new PointsModel();
