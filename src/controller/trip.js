@@ -5,7 +5,7 @@ import {render, RenderPosition} from '../utils/render.js';
 import NoPointComponent from '../components/no-card.js';
 import SortComponent, {SortType} from '../components/sort.js';
 import {isOneDay} from '../utils/common.js';
-import PointController from './point.js';
+import PointController, {Mode as PointControllerMode, EmptyPoint} from './point.js';
 
 // функция отрисовки для
 const renderDay = (container, dayNumber, date) => {
@@ -48,7 +48,7 @@ const renderPoints = (container, points, isDayCount, onDataChange, onViewChange)
 
     // рендерим карточку точки маршрута в список событий
     const pointController = new PointController(eventListElement, onDataChange, onViewChange);
-    pointController.render(point, i);
+    pointController.render(point, i, PointControllerMode.DEFAULT);
     newPoints.concat(pointController);
   });
 
@@ -67,6 +67,7 @@ export default class TripController {
     this._sortComponent = new SortComponent();
     this._dayComponent = new DayComponent();
     this._eventComponent = new EventComponent();
+    this._creatingPoint = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -91,6 +92,14 @@ export default class TripController {
     }
   }
 
+  createPoint() {
+    if (this._creatingPoint) {
+      return;
+    }
+
+    this._creatingPoint = new PointController(this._container, this._onDataChange, this._onViewChange);
+    this._creatingPoint.render(EmptyPoint, new Date() + Math.random(), PointControllerMode.ADDING);
+  }
   _removePoints() {
     this._renderedPoints.forEach((point) => point.destroy());
     this._renderedPoints = [];
@@ -126,17 +135,30 @@ export default class TripController {
     this._renderPoints(sortedPoints);
   }
 
+  _updatePoints() {
+    this._removePoints();
+    this._renderPoints(this._pointsModel.getTasks());
+  }
+
   _onDataChange(pointController, oldData, newData) {
-    const points = this._pointsModel.getPoints();
-    const pointIndex = points.findIndex((it) => it === oldData);
-
-    if (pointIndex === -1) {
-      return;
+    if (oldData === EmptyPoint) {
+      this._creatingPoint = null;
+      if (newData === null) {
+        pointController.destroy();
+        this._updatePoints();
+      } else {
+        this._pointsModel.addTask(newData);
+        pointController.render(newData, PointControllerMode.DEFAULT);
+      }
+    } else if (newData === null) {
+      this._pointsModel.removePoint(oldData.id);
+      this._updatePoints();
+    } else {
+      const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
+      if (isSuccess) {
+        pointController.render(newData, PointControllerMode.DEFAULT);
+      }
     }
-
-    points = [].concat(points.slice(0, pointIndex), newData, points.slice(pointIndex + 1));
-
-    pointController.render(points[pointIndex], pointIndex);
   }
 
   _onViewChange() {
@@ -144,8 +166,7 @@ export default class TripController {
   }
 
   _onFilterChange() {
-    this._removePoints();
-    this._renderPoints(this._pointsModel.getPoints());
+    this._updateTasks();
   }
 }
 
