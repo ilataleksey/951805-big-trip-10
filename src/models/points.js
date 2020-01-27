@@ -25,7 +25,7 @@ export default class Points {
 
   setFilter(filterType) {
     this._activeFilterType = filterType;
-    this._filterChangeHandlers.forEach((handler) => handler());
+    this._callHandlers(this._filterChangeHandlers);
   }
 
   updatePoint(id, point) {
@@ -42,5 +42,9 @@ export default class Points {
 
   setFilterChangeHandler(handler) {
     this._filterChangeHandlers.push(handler);
+  }
+
+  _callHandlers(handlers) {
+    handlers.forEach((handler) => handler());
   }
 }
