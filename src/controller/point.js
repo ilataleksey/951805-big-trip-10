@@ -64,7 +64,11 @@ export default class PointController {
       const data = this._pointEditComponent.getData();
       this._onDataChange(this, point, data);
     });
-    this._pointEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, point, null));
+
+    this._pointEditComponent.setDeleteButtonClickHandler((evt) => {
+      evt.preventDefault();
+      this._onDataChange(this, point, null);
+    });
 
     switch (mode) {
       case Mode.DEFAULT:
