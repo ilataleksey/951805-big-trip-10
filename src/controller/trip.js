@@ -92,8 +92,8 @@ export default class TripController {
   }
 
   _removePoints() {
-    this._renderPoints.forEach((point) => point.destroy());
-    this._renderPoints = [];
+    this._renderedPoints.forEach((point) => point.destroy());
+    this._renderedPoints = [];
   }
 
   _renderPoints(points) {
@@ -145,7 +145,7 @@ export default class TripController {
 
   _onFilterChange() {
     this._removePoints();
-    this._renderPoints(this._pointsModel.getTasks());
+    this._renderPoints(this._pointsModel.getPoints());
   }
 }
 
