@@ -26,19 +26,20 @@ export default class Points {
   setFilter(filterType) {
     this._activeFilterType = filterType;
     this._callHandlers(this._filterChangeHandlers);
+  }
 
-    removePoint(id) {
-      const pointIndex = this._points.findIndex((point) => point.id === id);
+  removePoint(id) {
+    const pointIndex = this._points.findIndex((point) => point.id === id);
 
-      if (pointIndex === -1) {
-       return false;
-      }
+    if (pointIndex === -1) {
+      return false;
+    }
 
-      this._points = [].concat(this._points.slice(0, index), this._points.slice(pointIndex + 1));
+    this._points = [].concat(this._points.slice(0, pointIndex), this._points.slice(pointIndex + 1));
 
-      this._callHandlers(this._dataChangeHandlers);
+    this._callHandlers(this._dataChangeHandlers);
 
-      return true;
+    return true;
   }
 
   updatePoint(id, point) {
