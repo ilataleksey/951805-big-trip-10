@@ -6,48 +6,59 @@ export const FILTER_TYPE = {
 
 export const TYPES = [
   {
-    action: `bus`,
-    description: `Bus to `,
-  },
-  {
-    action: `check-in`,
-    description: `Check-In in `,
-  },
-  {
-    action: `drive`,
-    description: `Drive to `,
-  },
-  {
-    action: `flight`,
-    description: `Flight to `,
-  },
-  {
-    action: `restaurant`,
-    description: `Restaurant in `,
-  },
-  {
-    action: `ship`,
-    description: `Ship to `,
-  },
-  {
-    action: `sightseeing`,
-    description: `Sightseeing in `,
-  },
-  {
     action: `taxi`,
     description: `Taxi to `,
+    group: `transfer`,
+  },
+  {
+    action: `bus`,
+    description: `Bus to `,
+    group: `transfer`,
   },
   {
     action: `train`,
     description: `Train to `,
+    group: `transfer`,
+  },
+  {
+    action: `ship`,
+    description: `Ship to `,
+    group: `transfer`,
   },
   {
     action: `transport`,
     description: `Transport to `,
+    group: `transfer`,
+  },
+  {
+    action: `drive`,
+    description: `Drive to `,
+    group: `transfer`,
+  },
+  {
+    action: `flight`,
+    description: `Flight to `,
+    group: `transfer`,
+  },
+  {
+    action: `check-in`,
+    description: `Check-In in `,
+    group: `activity`,
+  },
+  {
+    action: `sightseeing`,
+    description: `Sightseeing in `,
+    group: `activity`,
+  },
+  {
+    action: `restaurant`,
+    description: `Restaurant in `,
+    group: `activity`,
   },
   {
     action: `trip`,
     description: `Trip to `,
+    group: `activity`,
   },
 ];
 
