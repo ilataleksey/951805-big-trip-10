@@ -18,7 +18,7 @@ const siteHeaderElement = document.querySelector(`.page-header`);
 // Быстрое решение для подписки на клик по кнопке.
 // Это противоречит нашей архитектуре работы с DOM-элементами, но это временное решение.
 // Совсем скоро мы создадим полноценный компонент для работы с меню.
-siteHeaderElement.getElement().querySelector(`.trip-main__event-add-btn`)
+siteHeaderElement.querySelector(`.trip-main__event-add-btn`)
   .addEventListener(`click`, () => {
     tripController.createPoint();
   });
