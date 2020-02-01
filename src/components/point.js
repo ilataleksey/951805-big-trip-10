@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {formatTime, formatDateHTML, duration} from '../utils/common.js';
+import {formatTime, formatDateHTML, duration, toCapitaliseFirstLetter} from '../utils/common.js';
 
 const createOffersMarkup = (additionOffers) => {
   return additionOffers
@@ -17,8 +17,8 @@ const createOffersMarkup = (additionOffers) => {
     .join(`\n`);
 };
 
-export const createCardTemplate = (card) => {
-  const {type, destination, dates, price, offers} = card;
+export const createPointTemplate = (point) => {
+  const {type, destination, dates, price, offers} = point;
 
   const startTime = formatTime(dates.start);
   const endTime = formatTime(dates.end);
@@ -31,15 +31,16 @@ export const createCardTemplate = (card) => {
   durationH = durationH ? `${durationH}H` : ``;
   let durationM = duration(dates.duration, `minutes`);
   durationM = durationM ? `${durationM}M` : ``;
+  const pointDuration = `${durationD} ${durationH} ${durationM}`;
 
   const addOffers = createOffersMarkup(Array.from(offers));
   return (
     `<li class="trip-events__item">
       <div class="event">
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${type.action}.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type.description} ${destination.city}</h3>
+        <h3 class="event__title">${toCapitaliseFirstLetter(type)} ${destination.city}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -47,7 +48,7 @@ export const createCardTemplate = (card) => {
             &mdash;
             <time class="event__end-time" datetime="${endTimeHTML}">${endTime}</time>
           </p>
-          <p class="event__duration">${durationD} ${durationH} ${durationM}</p>
+          <p class="event__duration">${pointDuration}</p>
         </div>
 
         <p class="event__price">
@@ -67,15 +68,15 @@ export const createCardTemplate = (card) => {
   );
 };
 
-export default class Card extends AbstractComponent {
-  constructor(card) {
+export default class Point extends AbstractComponent {
+  constructor(point) {
     super();
 
-    this._card = card;
+    this._point = point;
   }
 
   getTemplate() {
-    return createCardTemplate(this._card);
+    return createPointTemplate(this._point);
   }
 
   setEditButtonClickHandler(handler) {
