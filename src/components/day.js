@@ -1,13 +1,12 @@
 import AbstractComponent from './abstract-component.js';
-import {MONTHS} from '../const.js';
-import {formatDateHTML} from '../utils/common.js';
+import {formatDateHTML, formatDay} from '../utils/common.js';
 
 const createDayTemplate = (dayNumber, date) => {
 
   let dayTemplate = ``;
 
   if (dayNumber !== 0) {
-    const day = `${MONTHS[date.getMonth()].toUpperCase()} ${date.getDate()}`;
+    const day = `${formatDay(date)}`;
     const dayHTML = formatDateHTML(date);
 
     dayTemplate = (
@@ -29,11 +28,11 @@ export default class Day extends AbstractComponent {
   constructor(dayNumber, date) {
     super();
 
-    this.dayNumber = dayNumber;
+    this._dayNumber = dayNumber;
     this._date = date;
   }
 
   getTemplate() {
-    return createDayTemplate(this.dayNumber, this._date);
+    return createDayTemplate(this._dayNumber, this._date);
   }
 }

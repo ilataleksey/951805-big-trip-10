@@ -9,6 +9,10 @@ export const formatDate = (date) => {
   return moment(date).format(`DD/MM/YY`);
 };
 
+export const formatDay = (date) => {
+  return moment(date).format(`MMM D`);
+};
+
 export const duration = (length, unit) => {
   const eventDuration = {
     days: moment.duration(length).days(),
