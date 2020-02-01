@@ -1,6 +1,6 @@
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
-import PointComponent from '../components/card.js';
-import PointEditComponent from '../components/edit-card.js';
+import PointComponent from '../components/point.js';
+import PointEditComponent from '../components/point-edit.js';
 
 export const Mode = {
   ADDING: `adding`,
@@ -9,20 +9,51 @@ export const Mode = {
 };
 
 export const EmptyPoint = {
-  type: ``,
+  id: `new-point`,
+  type: `flight`,
   destination: {
-    city: ``,
-    description: ``,
+    city: `Geneva`,
+    description: `Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.`,
   },
   dates: {
-    start: null,
-    end: null,
-    duration: null,
+    start: new Date(),
+    end: new Date(),
+    duration: 0,
   },
-  price: null,
-  isFavorite: false,
-  offers: null,
-  photos: null,
+  price: ``,
+  offers: [
+    {
+      id: `luggage`,
+      type: `Add luggage`,
+      price: 10,
+      chosen: false,
+    },
+    {
+      id: `class`,
+      type: `Switch to comfort class`,
+      price: 150,
+      chosen: false,
+    },
+    {
+      id: `meal`,
+      type: `Add meal`,
+      price: 2,
+      chosen: false,
+    },
+    {
+      id: `seats`,
+      type: `Choose seats`,
+      price: 9,
+      chosen: false,
+    },
+  ],
+  photos: [
+    `img/photos/1.jpg`,
+    `img/photos/2.jpg`,
+    `img/photos/3.jpg`,
+    `img/photos/4.jpg`,
+    `img/photos/5.jpg`,
+  ],
 };
 
 export default class PointController {
@@ -40,23 +71,17 @@ export default class PointController {
   }
 
   // функция для генерации карточки точки маршрута внутри дня
-  render(point, i, mode) {
+  render(point, mode) {
     const oldPointComponent = this._pointComponent;
     const oldPointEditComponent = this._pointEditComponent;
     this._mode = mode;
 
     this._pointComponent = new PointComponent(point);
-    this._pointEditComponent = new PointEditComponent(point, i);
+    this._pointEditComponent = new PointEditComponent(point);
 
     this._pointComponent.setEditButtonClickHandler(() => {
       this._replacePointToEdit();
       document.addEventListener(`keydown`, this._onEscKeyDown);
-    });
-
-    this._pointEditComponent.setFavoritButtonClickHandler(() => {
-      this._onDataChange(this, point, Object.assign({}, point, {
-        isFavorite: !point.isFavorite,
-      }));
     });
 
     this._pointEditComponent.setSubmitHandler((evt) => {
