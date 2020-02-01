@@ -2,7 +2,7 @@ import moment from 'moment';
 
 
 export const formatTime = (date) => {
-  return moment(date).format(`hh:mm`);
+  return moment(date).format(`HH:mm`);
 };
 
 export const formatDate = (date) => {
@@ -27,4 +27,8 @@ export const isOneDay = (dateA, dateB) => {
   const a = moment(dateA);
   const b = moment(dateB);
   return a.diff(b, `days`) === 0 && dateA.getDate() === dateB.getDate();
+};
+
+export const toCapitaliseFirstLetter = (word) => {
+  return `${word[0].toUpperCase()}${word.slice(1)}`;
 };
