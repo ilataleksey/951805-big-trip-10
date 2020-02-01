@@ -7,7 +7,7 @@ import SortComponent, {SortType} from '../components/sort.js';
 import {isOneDay} from '../utils/common.js';
 import PointController, {Mode as PointControllerMode, EmptyPoint} from './point.js';
 
-// функция отрисовки для
+// функция отрисовки дня
 const renderDay = (container, dayNumber, date) => {
   const dayComponent = new DayComponent(dayNumber, date);
   render(container, dayComponent, RenderPosition.BEFOREEND);
@@ -47,7 +47,10 @@ const renderPoints = (container, points, isDayCount, onDataChange, onViewChange)
     }
 
     // рендерим карточку точки маршрута в список событий
-    const pointController = new PointController(eventListElement, onDataChange, onViewChange);
+    const eventComponent = new EventComponent();
+    render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
+    const eventElement = eventComponent.getElement();
+    const pointController = new PointController(eventElement, onDataChange, onViewChange);
     pointController.render(point, PointControllerMode.DEFAULT);
     newPoints = newPoints.concat(pointController);
   });
@@ -102,6 +105,7 @@ export default class TripController {
     const container = this._container.getElement();
     this._creatingPoint = new PointController(container.parentElement, this._onDataChange, this._onViewChange);
     this._creatingPoint.render(EmptyPoint, PointControllerMode.ADDING);
+    render(container.parentElement, this._sortComponent, RenderPosition.AFTERBEGINING);
   }
   _removePoints() {
     // this._renderedPoints.forEach((point) => point.destroy());
