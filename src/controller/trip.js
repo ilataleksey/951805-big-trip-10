@@ -102,6 +102,7 @@ export default class TripController {
       return;
     }
 
+    this._onViewChange();
     const container = this._container.getElement();
     this._creatingPoint = new PointController(container.parentElement, this._onDataChange, this._onViewChange);
     this._creatingPoint.render(EmptyPoint, PointControllerMode.ADDING);
